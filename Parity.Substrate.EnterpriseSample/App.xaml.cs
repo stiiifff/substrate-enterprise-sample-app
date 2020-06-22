@@ -1,17 +1,17 @@
-﻿using System;
+﻿using Polkadot.Api;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 
 namespace Parity.Substrate.EnterpriseSample
 {
-    public partial class App : Application
+    public partial class App : Xamarin.Forms.Application
     {
         public App()
         {
             InitializeComponent();
-
             MainPage = new MainPage();
         }
+
+        public IApplication PolkadotApi => DependencyService.Get<IApplication>();
 
         protected override void OnStart()
         {

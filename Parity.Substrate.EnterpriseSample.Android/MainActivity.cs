@@ -1,13 +1,11 @@
-﻿
-using Android.App;
+﻿using Android.App;
 using Android.Content.PM;
-using Android.Runtime;
 using Android.OS;
-using Java.IO;
+using Android.Runtime;
 using Android.Util;
-using System.IO;
+using Polkadot.Api;
+using System;
 using System.Threading.Tasks;
-using Java.Lang;
 using Xamarin.Forms;
 
 namespace Parity.Substrate.EnterpriseSample.Droid
@@ -15,8 +13,10 @@ namespace Parity.Substrate.EnterpriseSample.Droid
     [Activity(Label = "Parity.Substrate.EnterpriseSample", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
-        string nodeBinPath, nodeDataDir;
-        Java.Lang.Process nodeProcess;
+        const string NodeUrl = "ws://127.0.0.1:9944";
+
+        ILightClient LightClient => DependencyService.Get<ILightClient>();
+        IApplication PolkadotApi => DependencyService.Get<IApplication>();
 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
@@ -25,41 +25,47 @@ namespace Parity.Substrate.EnterpriseSample.Droid
 
             base.OnCreate(savedInstanceState);
 
-            DependencyService.RegisterSingleton<ILightClient>(new LightClient());
-
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
-            //(nodeBinPath, nodeDataDir) = await InstallNodeBinaryAsync();
+            DependencyService.RegisterSingleton(PolkaApi.GetAppication());
+            DependencyService.RegisterSingleton<ILightClient>(new LightClient(Assets));
+            await LightClient.InitAsync();
+            await LightClient.StartAsync();
 
             LoadApplication(new App());
         }
 
-        protected override void OnResume()
+        protected override async void OnResume()
         {
             base.OnResume();
+            await LightClient.StartAsync();
 
-            //nodeProcess = StartProcess($"{nodeBinPath} --dev --light -d {nodeDataDir}");
+            _ = Task.Run(async () => {
+                try
+                {
+                    while (!LightClient.IsRunning)
+                        await Task.Delay(TimeSpan.FromSeconds(1));
+                    PolkadotApi?.Connect(NodeUrl);
+                }
+                catch (System.Exception e)
+                {
+                    Log.Debug("Polkadot", e.ToString());
+                }
+            });
         }
 
         protected override void OnPause()
         {
             base.OnPause();
-            //if (nodeProcess != null && nodeProcess.IsAlive)
-            //{
-            //    try
-            //    {
-            //        nodeProcess.Destroy();
-            //    }
-            //    catch (Java.Lang.Exception e)
-            //    {
-            //        Log.Error("Substrate", e.ToString());
-            //    }
-            //    finally
-            //    {
-            //        nodeProcess.Dispose();
-            //    }
-            //}
+            PolkadotApi?.Disconnect();
+        }
+
+        protected override async void OnDestroy()
+        {
+            base.OnDestroy();
+            PolkadotApi?.Disconnect();
+            await LightClient.StopASync();
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
@@ -67,82 +73,6 @@ namespace Parity.Substrate.EnterpriseSample.Droid
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-
-        async Task<(string, string)> InstallNodeBinaryAsync()
-        {
-            var appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            var nodeBinDir = Path.Combine(appPath, "node/bin");
-            if (!Directory.Exists(nodeBinDir))
-                Directory.CreateDirectory(nodeBinDir);
-            var nodeDataDir = Path.Combine(appPath, "node/data");
-            if (!Directory.Exists(nodeDataDir))
-                Directory.CreateDirectory(nodeDataDir);
-
-            var nodeBinPath = Path.Combine(nodeBinDir, "io.parity.substrate.node-template");
-            if (!System.IO.File.Exists(nodeBinPath))
-            {
-                using var input = Assets.Open("node-template");
-                using var file = System.IO.File.OpenWrite(nodeBinPath);
-                await input.CopyToAsync(file);
-
-                var chdmod = RunCommandToCompletion($"/system/bin/chmod 744 {nodeBinPath}");
-                if (!string.IsNullOrEmpty(chdmod))
-                    Log.Debug("LightClient", chdmod);
-            }
-
-            var res = RunCommandToCompletion($"{nodeBinPath} purge-chain --dev --light -d {nodeDataDir} -y");
-            if (!string.IsNullOrEmpty(res))
-                Log.Debug("LightClient", res);
-            
-            return (nodeBinPath, nodeDataDir);
-        }
-
-        private string RunCommandToCompletion(string command)
-        {
-            try
-            {
-                var process = Runtime.GetRuntime().Exec(command);
-
-                using var input = new InputStreamReader(process.InputStream);
-                using var reader = new BufferedReader(input);
-
-                int read;
-                char[] buffer = new char[4096];
-                var output = new StringBuffer();
-                while ((read = reader.Read(buffer)) > 0)
-                {
-                    output.Append(buffer, 0, read);
-                }
-                reader.Close();
-                process.WaitFor();
-
-                return output.ToString();
-            }
-            catch (Java.IO.IOException e)
-            {
-                throw new RuntimeException(e);
-            }
-            catch (InterruptedException e)
-            {
-                throw new RuntimeException(e);
-            }
-        }
-
-        private Java.Lang.Process StartProcess(string command)
-        {
-            try
-            {
-                return Runtime.GetRuntime().Exec(command);
-            }
-            catch (Java.IO.IOException e)
-            {
-                throw new RuntimeException(e);
-            }
-            catch (InterruptedException e)
-            {
-                throw new RuntimeException(e);
-            }
         }
     }
 }
