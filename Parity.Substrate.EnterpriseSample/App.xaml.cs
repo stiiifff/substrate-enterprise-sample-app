@@ -1,4 +1,5 @@
-﻿using Polkadot.Api;
+﻿using Parity.Substrate.EnterpriseSample.Views;
+using Polkadot.Api;
 using Xamarin.Forms;
 
 namespace Parity.Substrate.EnterpriseSample

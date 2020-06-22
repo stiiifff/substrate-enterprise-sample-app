@@ -3,6 +3,7 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Util;
+using Parity.Substrate.EnterpriseSample.Services;
 using Polkadot.Api;
 using System;
 using System.Threading.Tasks;

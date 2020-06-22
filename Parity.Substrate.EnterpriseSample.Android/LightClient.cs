@@ -2,13 +2,13 @@
 using Android.Util;
 using Java.IO;
 using Java.Lang;
-using Parity.Substrate.EnterpriseSample;
+using Parity.Substrate.EnterpriseSample.Services;
 using System.IO;
 using System.Threading.Tasks;
 
 [assembly: Xamarin.Forms.Dependency(typeof(LightClient))]
 
-namespace Parity.Substrate.EnterpriseSample
+namespace Parity.Substrate.EnterpriseSample.Services
 {
     public class LightClient : ILightClient
     {

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
-namespace Parity.Substrate.EnterpriseSample
+namespace Parity.Substrate.EnterpriseSample.Services
 {
     public interface ILightClient
     {
