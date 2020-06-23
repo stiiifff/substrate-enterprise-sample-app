@@ -9,6 +9,14 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
         public AboutViewModel()
         {
             Title = "About";
+            ApplicationVersion = $"{Xamarin.Essentials.AppInfo.Name} v{Xamarin.Essentials.AppInfo.Version}";
+        }
+
+        private string applicationVersion;
+        public string ApplicationVersion
+        {
+            get { return applicationVersion; }
+            set { SetProperty(ref applicationVersion, value); }
         }
 
         private SystemInfo systemInfo;

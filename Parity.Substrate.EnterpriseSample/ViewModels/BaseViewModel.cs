@@ -1,4 +1,5 @@
-﻿using Polkadot.Api;
+﻿using Parity.Substrate.EnterpriseSample.Services;
+using Polkadot.Api;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -33,6 +34,8 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             get { return title; }
             set { SetProperty(ref title, value); }
         }
+
+        protected ILightClient LightClient => DependencyService.Get<ILightClient>();
         protected IApplication PolkadotApi => DependencyService.Get<IApplication>();
 
         protected bool SetProperty<T>(ref T backingStore, T value,
