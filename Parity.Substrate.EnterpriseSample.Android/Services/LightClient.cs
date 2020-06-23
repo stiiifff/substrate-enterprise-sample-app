@@ -12,7 +12,7 @@ namespace Parity.Substrate.EnterpriseSample.Services
 {
     public class LightClient : ILightClient
     {
-        string nodeBinPath, nodeDataDir;
+        string nodeBasePath, nodeBinPath, nodeChainSpecPath;
         Process nodeProcess;
 
         public LightClient(AssetManager assets)
@@ -28,7 +28,7 @@ namespace Parity.Substrate.EnterpriseSample.Services
 
         public async Task InitAsync()
         {
-            (nodeBinPath, nodeDataDir) = await InstallNodeBinaryAsync();
+            (nodeBasePath, nodeBinPath, nodeChainSpecPath) = await InstallNodeBinaryAsync();
             IsInitialized = true;
         }
 
@@ -43,17 +43,19 @@ namespace Parity.Substrate.EnterpriseSample.Services
             await Task.Run(StopNode);
         }
 
-        async Task<(string, string)> InstallNodeBinaryAsync()
+        async Task<(string, string, string)> InstallNodeBinaryAsync()
         {
             var appPath = Xamarin.Essentials.FileSystem.AppDataDirectory;
 
             var nodeBinDir = Path.Combine(appPath, "node/bin");
             if (!Directory.Exists(nodeBinDir))
                 Directory.CreateDirectory(nodeBinDir);
-            
-            var nodeDataDir = Path.Combine(appPath, "node/data");
-            if (!Directory.Exists(nodeDataDir))
-                Directory.CreateDirectory(nodeDataDir);
+
+            var nodeCfgDir = Path.Combine(appPath, "node/config");
+            if (!Directory.Exists(nodeCfgDir))
+                Directory.CreateDirectory(nodeCfgDir);
+
+            var nodeBasePath = Path.Combine(appPath, "node");
 
             var nodeBinPath = Path.Combine(nodeBinDir, "io.parity.substrate.node-template");
             if (!System.IO.File.Exists(nodeBinPath))
@@ -63,20 +65,28 @@ namespace Parity.Substrate.EnterpriseSample.Services
                 await input.CopyToAsync(file);
             }
 
-            var chdmod = await RunCommandAsync($"/system/bin/chmod 744 {nodeBinPath}");
-            if (!string.IsNullOrEmpty(chdmod))
-                Log.Debug(GetType().Name, chdmod);
+            var nodeChainSpecPath = Path.Combine(nodeCfgDir, "chain-spec.json");
+            if (!System.IO.File.Exists(nodeChainSpecPath))
+            {
+                using var input = Assets.Open("chain-spec.json");
+                using var file = System.IO.File.OpenWrite(nodeChainSpecPath);
+                await input.CopyToAsync(file);
+            }
 
-            var res = await RunCommandAsync($"{nodeBinPath} purge-chain --dev --light -d {nodeDataDir} -y");
+            var chmod = await RunCommandAsync($"/system/bin/chmod 744 {nodeBinPath}");
+            if (!string.IsNullOrEmpty(chmod))
+                Log.Debug(GetType().Name, chmod);
+
+            var res = await RunCommandAsync($"{nodeBinPath} purge-chain -y -d {nodeBasePath} --chain={nodeChainSpecPath}");
             if (!string.IsNullOrEmpty(res))
                 Log.Debug(GetType().Name, res);
 
-            return (nodeBinPath, nodeDataDir);
+            return (nodeBasePath, nodeBinPath, nodeChainSpecPath);
         }
 
         void StartNode()
         {
-            nodeProcess = StartProcess($"{nodeBinPath} --dev --light -d {nodeDataDir} --no-prometheus --no-telemetry");
+            nodeProcess = StartProcess($"{nodeBinPath} -d {nodeBasePath} --chain={nodeChainSpecPath} --light --no-prometheus --no-telemetry");
         }
 
         void StopNode()

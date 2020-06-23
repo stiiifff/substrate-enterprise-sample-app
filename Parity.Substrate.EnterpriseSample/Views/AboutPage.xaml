@@ -61,6 +61,17 @@
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
+                <Label FontSize="22" IsVisible="{Binding IsReady}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <FormattedString.Spans>
+                                <Span Text="Peers" FontAttributes="Bold" FontSize="22" />
+                                <Span Text=": " />
+                                <Span Text="{Binding PeersInfo.Count}" ForegroundColor="{StaticResource LightTextColor}" />
+                            </FormattedString.Spans>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
                 <!-- Runtime information / Need to connect to a full node ... -->
                 <!--
                 <Label FontSize="22" Padding="0,20,0,0">
