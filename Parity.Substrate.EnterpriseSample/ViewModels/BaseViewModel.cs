@@ -35,8 +35,9 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             set { SetProperty(ref title, value); }
         }
 
+        protected App App => ((App)Xamarin.Forms.Application.Current);
         protected ILightClient LightClient => DependencyService.Get<ILightClient>();
-        protected IApplication PolkadotApi => DependencyService.Get<IApplication>();
+        protected IJsonRpc PolkadotApi => DependencyService.Get<IJsonRpc>();
 
         protected bool SetProperty<T>(ref T backingStore, T value,
             [CallerMemberName] string propertyName = "",

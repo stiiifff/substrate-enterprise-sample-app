@@ -1,5 +1,6 @@
 ﻿
 using Parity.Substrate.EnterpriseSample.ViewModels;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -14,12 +15,10 @@ namespace Parity.Substrate.EnterpriseSample.Views
             InitializeComponent();
         }
 
-        protected override async void OnAppearing()
+        internal async Task OnNavigatedTo()
         {
             if (BindingContext is AboutViewModel vm)
-            {
                 await Task.Run(() => vm.LoadData());
-            }
         }
     }
 }

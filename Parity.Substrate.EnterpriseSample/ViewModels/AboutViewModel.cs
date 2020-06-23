@@ -1,5 +1,8 @@
-﻿using Polkadot.Data;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Polkadot.Data;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Xamarin.Forms;
 
@@ -11,7 +14,6 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
         {
             Title = "About";
             ApplicationVersion = $"{Xamarin.Essentials.AppInfo.Name} v{Xamarin.Essentials.AppInfo.Version}";
-            Device.StartTimer(TimeSpan.FromSeconds(10), () => { RefreshPeers(); return true; });
         }
 
         private string applicationVersion;
@@ -28,13 +30,6 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             set { SetProperty(ref peersInfo, value); }
         }
 
-        private RuntimeVersion runtimeVersion;
-        public RuntimeVersion RuntimeVersion
-        {
-            get { return runtimeVersion; }
-            set { SetProperty(ref runtimeVersion, value); }
-        }
-
         private SystemInfo systemInfo;
         public SystemInfo SystemInfo
         {
@@ -47,9 +42,11 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             IsBusy = true;
             try
             {
-                
-                SystemInfo = PolkadotApi.GetSystemInfo();
-                //RuntimeVersion = PolkadotApi.GetRuntimeVersion(new GetRuntimeVersionParams { });
+                if (!App.IsPolkadotApiConnected)
+                    App.ConnectToNode();
+                SystemInfo = GetSystemInfo();
+                PeersInfo = GetSystemPeers();
+                Device.StartTimer(TimeSpan.FromSeconds(10), RefreshPeers);
             }
             catch (Exception ex)
             {
@@ -61,16 +58,52 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             }
         }
 
-        private void RefreshPeers()
+        private bool RefreshPeers()
         {
             try
             {
-                PeersInfo = PolkadotApi.GetSystemPeers();
+                PeersInfo = GetSystemPeers();
+                return true;
             }
             catch (Exception ex)
             {
                 Trace.WriteLine(ex.ToString());
+                return false;
             }
+        }
+
+        public SystemInfo GetSystemInfo()
+        {
+            var systemNameQuery = JObject.FromObject(new { method = "system_name", @params = new JArray { } });
+            var systemNameJson = PolkadotApi.Request(systemNameQuery);
+
+            var systemChainQuery = new JObject { { "method", "system_chain" }, { "params", new JArray { } } };
+            var systemChainJson = PolkadotApi.Request(systemChainQuery);
+
+            var systemVersionQuery = new JObject { { "method", "system_version" }, { "params", new JArray { } } };
+            var systemVersionJson = PolkadotApi.Request(systemVersionQuery);
+
+            return new SystemInfo
+            {
+                ChainName = systemNameJson.Value<string>("result"),
+                ChainId = systemChainJson.Value<string>("result"),
+                Version = systemVersionJson.Value<string>("result"),
+            };
+        }
+
+        public PeersInfo GetSystemPeers()
+        {
+            JObject query = new JObject { { "method", "system_peers" },
+                                          { "params", new JArray { } } };
+            JObject response = PolkadotApi.Request(query);
+
+            var peers = JsonConvert.DeserializeObject<List<PeerInfo>>(response["result"].ToString());
+
+            return new PeersInfo
+            {
+                Count = peers.Count,
+                Peers = peers.ToArray()
+            };
         }
     }
 }

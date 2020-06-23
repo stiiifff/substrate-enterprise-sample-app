@@ -79,73 +79,7 @@
                             <TextCell Text="{Binding PeerId}" Detail="{Binding Roles}"/>
                         </DataTemplate>
                     </ListView.ItemTemplate>
-                </ListView>
-                <!-- Runtime information / Need to connect to a full node ... -->
-                <!--
-                <Label FontSize="22" Padding="0,20,0,0">
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <FormattedString.Spans>
-                                <Span Text="Runtime" FontAttributes="Bold" FontSize="22" />
-                            </FormattedString.Spans>
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
-                <Label FontSize="18">
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <FormattedString.Spans>
-                                <Span Text="Authoring version" FontAttributes="Bold" FontSize="18" />
-                                <Span Text=": " />
-                                <Span Text="{Binding RuntimeVersion.AuthoringVersion}"  />
-                            </FormattedString.Spans>
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
-                <Label FontSize="18">
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <FormattedString.Spans>
-                                <Span Text="Impl name" FontAttributes="Bold" FontSize="18" />
-                                <Span Text=": " />
-                                <Span Text="{Binding RuntimeVersion.ImplName}"  />
-                            </FormattedString.Spans>
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
-                <Label FontSize="18">
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <FormattedString.Spans>
-                                <Span Text="Impl version" FontAttributes="Bold" FontSize="18" />
-                                <Span Text=": " />
-                                <Span Text="{Binding RuntimeVersion.ImplVersion}"  />
-                            </FormattedString.Spans>
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
-                <Label FontSize="18">
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <FormattedString.Spans>
-                                <Span Text="Spec name" FontAttributes="Bold" FontSize="18" />
-                                <Span Text=": " />
-                                <Span Text="{Binding RuntimeVersion.SpecName}"  />
-                            </FormattedString.Spans>
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
-                <Label FontSize="18">
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <FormattedString.Spans>
-                                <Span Text="Spec version" FontAttributes="Bold" FontSize="18" />
-                                <Span Text=": " />
-                                <Span Text="{Binding RuntimeVersion.SpecVersion}"  />
-                            </FormattedString.Spans>
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>-->
+                </ListView>                
             </StackLayout>
         </ScrollView>
         <StackLayout Grid.Row="2" Orientation="Vertical" Padding="16,20,16,16" Spacing="10">

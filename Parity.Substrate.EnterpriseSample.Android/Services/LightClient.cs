@@ -87,6 +87,18 @@ namespace Parity.Substrate.EnterpriseSample.Services
         void StartNode()
         {
             nodeProcess = StartProcess($"{nodeBinPath} -d {nodeBasePath} --chain={nodeChainSpecPath} --light --no-prometheus --no-telemetry");
+
+            //using var input = new InputStreamReader(nodeProcess.ErrorStream);
+            //using var reader = new BufferedReader(input);
+
+            //string line;
+            //var output = new System.Text.StringBuilder();
+            //while (!string.IsNullOrEmpty((line = reader.ReadLine())))
+            //{
+            //    output.AppendLine(line);
+            //}
+            //reader.Close();
+            //nodeProcess.WaitFor();
         }
 
         void StopNode()

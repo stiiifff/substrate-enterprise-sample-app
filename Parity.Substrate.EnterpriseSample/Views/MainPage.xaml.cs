@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace Parity.Substrate.EnterpriseSample.Views
@@ -15,6 +9,24 @@ namespace Parity.Substrate.EnterpriseSample.Views
         public MainPage()
         {
             InitializeComponent();
+        }
+
+        App App => ((App) Application.Current);
+
+        override protected async void OnCurrentPageChanged()
+        {
+            if (CurrentPage is NavigationPage navpage)
+            {
+                //if (navpage.CurrentPage is HomePage _home)
+                //{
+                //    if (!App.IsPolkadotApiConnected)
+                //        App.ConnectToNode();
+                //}
+
+                if (navpage.CurrentPage is AboutPage about)
+                    await about.OnNavigatedTo();
+            }
+                
         }
     }
 }

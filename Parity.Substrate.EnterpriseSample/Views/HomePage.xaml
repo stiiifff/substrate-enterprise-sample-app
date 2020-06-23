@@ -13,7 +13,20 @@
         <vm:HomeViewModel />
     </ContentPage.BindingContext>
 
-    <StackLayout>
-        <Label Text="Hello Xamarin.Forms!" />
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="Primary">#222222</Color>
+            <Color x:Key="Accent">#231F20</Color>
+            <Color x:Key="LightTextColor">#999999</Color>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="Fill">
+        <Button Margin="0,10,0,0" Text="Query chain state"
+                Command="{Binding QueryChainStateCommand}"
+                BackgroundColor="{StaticResource Primary}"
+                TextColor="White"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"/>
     </StackLayout>
 </ContentPage>
