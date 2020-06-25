@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using Prism.Navigation;
+using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace Parity.Substrate.EnterpriseSample.Views
@@ -10,23 +11,11 @@ namespace Parity.Substrate.EnterpriseSample.Views
         {
             InitializeComponent();
         }
-
-        App App => ((App) Application.Current);
-
-        override protected async void OnCurrentPageChanged()
+        
+        protected override void OnCurrentPageChanged()
         {
-            if (CurrentPage is NavigationPage navpage)
-            {
-                //if (navpage.CurrentPage is HomePage _home)
-                //{
-                //    if (!App.IsPolkadotApiConnected)
-                //        App.ConnectToNode();
-                //}
-
-                if (navpage.CurrentPage is AboutPage about)
-                    await about.OnNavigatedTo();
-            }
-                
+            base.OnCurrentPageChanged();
+            ((CurrentPage as NavigationPage)?.CurrentPage?.BindingContext as INavigatedAware)?.OnNavigatedTo(new NavigationParameters());
         }
     }
 }

@@ -1,17 +1,26 @@
 ﻿using Parity.Substrate.EnterpriseSample.Services;
 using Polkadot.Api;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using Xamarin.Forms;
+using Prism.Mvvm;
+using Prism.Navigation;
 
 namespace Parity.Substrate.EnterpriseSample.ViewModels
 {
-    public class BaseViewModel : INotifyPropertyChanged
+    public class BaseViewModel : BindableBase, IInitialize, INavigationAware, IDestructible
     {
         bool isBusy = false;
         bool isReady = true;
+
+        public BaseViewModel(INavigationService navigationService, ILightClient lightClient, IJsonRpc polkadotApi)
+        {
+            NavigationService = navigationService;
+            LightClient = lightClient;
+            PolkadotApi = polkadotApi;
+        }
+
+        protected App App => ((App)Xamarin.Forms.Application.Current);
+        protected INavigationService NavigationService { get; private set; }
+        public ILightClient LightClient { get; }
+        public IJsonRpc PolkadotApi { get; }
 
         public bool IsBusy
         {
@@ -35,33 +44,24 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             set { SetProperty(ref title, value); }
         }
 
-        protected App App => ((App)Xamarin.Forms.Application.Current);
-        protected ILightClient LightClient => DependencyService.Get<ILightClient>();
-        protected IJsonRpc PolkadotApi => DependencyService.Get<IJsonRpc>();
-
-        protected bool SetProperty<T>(ref T backingStore, T value,
-            [CallerMemberName] string propertyName = "",
-            Action onChanged = null)
+        public virtual void Initialize(INavigationParameters parameters)
         {
-            if (EqualityComparer<T>.Default.Equals(backingStore, value))
-                return false;
 
-            backingStore = value;
-            onChanged?.Invoke();
-            OnPropertyChanged(propertyName);
-            return true;
         }
 
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        public virtual void OnNavigatedFrom(INavigationParameters parameters)
         {
-            var changed = PropertyChanged;
-            if (changed == null)
-                return;
 
-            changed.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        #endregion
+
+        public virtual void OnNavigatedTo(INavigationParameters parameters)
+        {
+
+        }
+
+        public virtual void Destroy()
+        {
+
+        }
     }
 }

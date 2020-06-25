@@ -1,32 +1,26 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Parity.Substrate.EnterpriseSample.Services;
+using Polkadot.Api;
 using Polkadot.Data;
+using Prism.Navigation;
+using Prism.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Input;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace Parity.Substrate.EnterpriseSample.ViewModels
 {
     public class AboutViewModel : BaseViewModel
     {
-        public AboutViewModel()
+        public AboutViewModel(INavigationService navigationService, IDeviceService device, ILightClient lightClient, IJsonRpc polkadotApi)
+            : base(navigationService, lightClient, polkadotApi)
         {
             Title = "About";
             ApplicationVersion = $"{Xamarin.Essentials.AppInfo.Name} v{Xamarin.Essentials.AppInfo.Version}";
-        }
-
-        private ICommand showNodeLogsCommand;
-        public ICommand ShowNodeLogsCommand
-        {
-            get { return showNodeLogsCommand; }
-            set { SetProperty(ref showNodeLogsCommand, value); }
-        }
-
-        internal void SetShowNodeLogsPage(Action showNodeLogsPage)
-        {
-            ShowNodeLogsCommand = new Command(showNodeLogsPage);
+            Device = device;
         }
 
         private string applicationVersion;
@@ -35,6 +29,8 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             get { return applicationVersion; }
             set { SetProperty(ref applicationVersion, value); }
         }
+
+        public IDeviceService Device { get; }
 
         private PeersInfo peersInfo;
         public PeersInfo PeersInfo
@@ -48,6 +44,12 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
         {
             get { return systemInfo; }
             set { SetProperty(ref systemInfo, value); }
+        }
+
+        public override async void OnNavigatedTo(INavigationParameters parameters)
+        {
+            base.OnNavigatedTo(parameters);
+            await Task.Run(() => LoadData());
         }
 
         internal void LoadData()

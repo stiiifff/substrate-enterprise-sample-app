@@ -1,6 +1,4 @@
-﻿using Parity.Substrate.EnterpriseSample.ViewModels;
-using System.Threading.Tasks;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace Parity.Substrate.EnterpriseSample.Views
@@ -11,12 +9,6 @@ namespace Parity.Substrate.EnterpriseSample.Views
         public HomePage()
         {
             InitializeComponent();
-        }
-
-        internal async Task OnNavigatedTo()
-        {
-            if (BindingContext is HomeViewModel vm)
-                await Task.Run(() => vm.LoadData());
         }
     }
 }

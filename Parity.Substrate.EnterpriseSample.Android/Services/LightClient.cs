@@ -2,14 +2,11 @@
 using Android.Util;
 using Java.IO;
 using Java.Lang;
-using Parity.Substrate.EnterpriseSample.Services;
 using System;
 using System.IO;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
-
-[assembly: Xamarin.Forms.Dependency(typeof(LightClient))]
 
 namespace Parity.Substrate.EnterpriseSample.Services
 {

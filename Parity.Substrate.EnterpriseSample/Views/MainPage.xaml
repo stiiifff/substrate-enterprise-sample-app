@@ -5,29 +5,31 @@
             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
             mc:Ignorable="d"
             xmlns:views="clr-namespace:Parity.Substrate.EnterpriseSample.Views"
-            x:Class="Parity.Substrate.EnterpriseSample.Views.MainPage">
+            x:Class="Parity.Substrate.EnterpriseSample.Views.MainPage"
+            NavigationPage.HasNavigationBar="False">
 
     <TabbedPage.Children>
         <NavigationPage Title="Home">
+            <x:Arguments>
+                <views:HomePage />
+            </x:Arguments>
             <NavigationPage.Icon>
                 <OnPlatform x:TypeArguments="FileImageSource">
                     <On Platform="iOS" Value="tab_feed.png"/>
                 </OnPlatform>
             </NavigationPage.Icon>
-            <x:Arguments>
-                <views:HomePage />
-            </x:Arguments>
+            
         </NavigationPage>
 
         <NavigationPage Title="About">
+            <x:Arguments>
+                <views:AboutPage />
+            </x:Arguments>
             <NavigationPage.Icon>
                 <OnPlatform x:TypeArguments="FileImageSource">
                     <On Platform="iOS" Value="tab_about.png"/>
                 </OnPlatform>
-            </NavigationPage.Icon>
-            <x:Arguments>
-                <views:AboutPage />
-            </x:Arguments>
+            </NavigationPage.Icon>            
         </NavigationPage>
     </TabbedPage.Children>
 

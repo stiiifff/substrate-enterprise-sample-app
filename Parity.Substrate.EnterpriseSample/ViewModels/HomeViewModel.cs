@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿using Parity.Substrate.EnterpriseSample.Services;
+using Polkadot.Api;
+using Prism.Navigation;
+using System.Diagnostics;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -6,7 +9,8 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
 {
     public class HomeViewModel : BaseViewModel
     {
-        public HomeViewModel()
+        public HomeViewModel(INavigationService navigationService, ILightClient lightClient, IJsonRpc polkadotApi)
+            : base(navigationService, lightClient, polkadotApi)
         {
             Title = "Home";
             QueryChainStateCommand = new Command(QueryChainState);

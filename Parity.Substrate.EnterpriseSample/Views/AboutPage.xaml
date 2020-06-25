@@ -3,15 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
              mc:Ignorable="d"
              x:Class="Parity.Substrate.EnterpriseSample.Views.AboutPage"
-             xmlns:vm="clr-namespace:Parity.Substrate.EnterpriseSample.ViewModels"
              Title="{Binding Title}"
              NavigationPage.HasNavigationBar="False">
-
-    <ContentPage.BindingContext>
-        <vm:AboutViewModel />
-    </ContentPage.BindingContext>
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -84,7 +81,7 @@
         </ScrollView>
         <StackLayout Grid.Row="2" Orientation="Vertical" Padding="16,20,16,16" Spacing="10">
             <Button Margin="0,10,0,0" Text="Show Node logs"
-                        Command="{Binding ShowNodeLogsCommand}"
+                        Command="{prism:NavigateTo 'NavigationPage/NodeLogsPage', UseModalNavigation=True}"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="White"
                         VerticalOptions="EndAndExpand" />

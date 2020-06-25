@@ -1,47 +1,99 @@
-﻿using Parity.Substrate.EnterpriseSample.Views;
+﻿using Prism;
+using Prism.Ioc;
 using Polkadot.Api;
-using Polkadot.Data;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Xamarin.Forms;
+using Xamarin.Essentials.Interfaces;
+using Xamarin.Essentials.Implementation;
+using Parity.Substrate.EnterpriseSample.Views;
+using Parity.Substrate.EnterpriseSample.Services;
+using Parity.Substrate.EnterpriseSample.ViewModels;
 
 namespace Parity.Substrate.EnterpriseSample
 {
-    public partial class App : Xamarin.Forms.Application
+    public partial class App
     {
         const string NodeUrl = "ws://127.0.0.1:9944";
 
-        public App()
-        {
-            InitializeComponent();
-            MainPage = new MainPage();
-        }
+        public App() : this(null) { }
 
-        public IJsonRpc PolkadotApi => DependencyService.Get<IJsonRpc>();
+        public App(IPlatformInitializer initializer) : base(initializer) { }
 
         public bool IsPolkadotApiConnected { get; private set; }
+        public IJsonRpc PolkadotApi => Container.Resolve<IJsonRpc>();
+        public ILightClient LightClient => Container.Resolve<ILightClient>();
 
-        public void ConnectToNode()
+        internal bool ConnectToNode()
         {
             if (IsPolkadotApiConnected)
-                return;
+                return true;
 
             try
             {
                 var _res = PolkadotApi.Connect(NodeUrl);
-                IsPolkadotApiConnected = true;
+                return (IsPolkadotApiConnected = true);
             }
             catch (System.Exception ex)
             {
                 Trace.WriteLine(ex);
+                return false;
             }
         }
 
-        protected override void OnSleep()
+        protected override void RegisterTypes(IContainerRegistry containerRegistry)
+        {
+            containerRegistry.RegisterSingleton<IAppInfo, AppInfoImplementation>();
+
+            containerRegistry.RegisterForNavigation<NavigationPage>();
+            containerRegistry.RegisterForNavigation<MainPage>();
+            containerRegistry.RegisterForNavigation<HomePage, HomeViewModel>();
+            containerRegistry.RegisterForNavigation<AboutPage, AboutViewModel>();
+            containerRegistry.RegisterForNavigation<NodeLogsPage, NodeLogsViewModel>();
+        }
+
+        protected override async void OnInitialized()
+        {
+            InitializeComponent();
+
+            _ = LightClient.InitAsync().ContinueWith(async _ => await LightClient.StartAsync());
+
+            await NavigationService.NavigateAsync("NavigationPage/MainPage");
+        }
+
+        protected override async void CleanUp()
+        {
+            base.CleanUp();
+            try
+            {
+                if (IsPolkadotApiConnected)
+                    PolkadotApi?.Disconnect();
+                await LightClient.StopASync();
+            }
+            finally
+            {
+                PolkadotApi?.Dispose();
+            }
+        }
+
+        protected override async void OnResume()
+        {
+            base.OnResume();
+            await LightClient.StartAsync();
+        }
+
+        protected override async void OnSleep()
         {
             base.OnSleep();
-            IsPolkadotApiConnected = false;
+            try
+            {
+                if (IsPolkadotApiConnected)
+                    PolkadotApi?.Disconnect();
+                await LightClient.StopASync();
+            }
+            finally
+            {
+                IsPolkadotApiConnected = false;
+            }
         }
     }
 }
