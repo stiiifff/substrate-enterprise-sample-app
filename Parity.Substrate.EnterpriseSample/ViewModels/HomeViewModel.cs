@@ -30,7 +30,7 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             }
         }
 
-        public void QueryChainState()
+        private void QueryChainState()
         {
             try
             {

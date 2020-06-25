@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Parity.Substrate.EnterpriseSample.Services
 {
@@ -6,6 +7,7 @@ namespace Parity.Substrate.EnterpriseSample.Services
     {
         bool IsInitialized { get; }
         bool IsRunning { get; }
+        IObservable<string> Logs { get; }
 
         Task InitAsync();
         Task StartAsync();

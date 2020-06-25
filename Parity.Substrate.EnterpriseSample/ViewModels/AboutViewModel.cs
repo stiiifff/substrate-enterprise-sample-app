@@ -4,6 +4,7 @@ using Polkadot.Data;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace Parity.Substrate.EnterpriseSample.ViewModels
@@ -14,6 +15,18 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
         {
             Title = "About";
             ApplicationVersion = $"{Xamarin.Essentials.AppInfo.Name} v{Xamarin.Essentials.AppInfo.Version}";
+        }
+
+        private ICommand showNodeLogsCommand;
+        public ICommand ShowNodeLogsCommand
+        {
+            get { return showNodeLogsCommand; }
+            set { SetProperty(ref showNodeLogsCommand, value); }
+        }
+
+        internal void SetShowNodeLogsPage(Action showNodeLogsPage)
+        {
+            ShowNodeLogsCommand = new Command(showNodeLogsPage);
         }
 
         private string applicationVersion;

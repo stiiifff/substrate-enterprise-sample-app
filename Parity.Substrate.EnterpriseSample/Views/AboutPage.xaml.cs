@@ -1,6 +1,5 @@
 ﻿
 using Parity.Substrate.EnterpriseSample.ViewModels;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -13,6 +12,14 @@ namespace Parity.Substrate.EnterpriseSample.Views
         public AboutPage()
         {
             InitializeComponent();
+            if (BindingContext is AboutViewModel vm)
+                vm.SetShowNodeLogsPage(async () => await Navigation.PushModalAsync(
+                    new NavigationPage(new NodeLogsPage())));
+        }
+
+        protected override void OnBindingContextChanged()
+        {
+            base.OnBindingContextChanged();
         }
 
         internal async Task OnNavigatedTo()

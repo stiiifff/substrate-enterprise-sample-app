@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Parity.Substrate.EnterpriseSample.Views.NodeLogsPage"
+             Title="{Binding Title}"
+             xmlns:vm="clr-namespace:Parity.Substrate.EnterpriseSample.ViewModels">
+    
+    <ContentPage.BindingContext>
+        <vm:NodeLogsViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="Primary">#222222</Color>
+            <Color x:Key="Accent">#231F20</Color>
+            <Color x:Key="LightTextColor">#999999</Color>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <ScrollView>
+        <StackLayout Orientation="Vertical" Padding="16,20,16,16" Spacing="10">
+            <ListView ItemsSource="{Binding Logs}" SelectionMode="None" HasUnevenRows="True" SeparatorVisibility="Default">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Label Text="{Binding Message}" FontSize="Micro" LineBreakMode="WordWrap"/>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

@@ -3,7 +3,10 @@ using Android.Util;
 using Java.IO;
 using Java.Lang;
 using Parity.Substrate.EnterpriseSample.Services;
+using System;
 using System.IO;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 
 [assembly: Xamarin.Forms.Dependency(typeof(LightClient))]
@@ -14,6 +17,7 @@ namespace Parity.Substrate.EnterpriseSample.Services
     {
         string nodeBasePath, nodeBinPath, nodeChainSpecPath;
         Process nodeProcess;
+        readonly ReplaySubject<string> logs = new ReplaySubject<string>(50);
 
         public LightClient(AssetManager assets)
         {
@@ -25,6 +29,8 @@ namespace Parity.Substrate.EnterpriseSample.Services
         public bool IsInitialized { get; private set; }
 
         public bool IsRunning => nodeProcess != null && nodeProcess.IsAlive;
+
+        public IObservable<string> Logs => logs.AsObservable();
 
         public async Task InitAsync()
         {
@@ -88,17 +94,19 @@ namespace Parity.Substrate.EnterpriseSample.Services
         {
             nodeProcess = StartProcess($"{nodeBinPath} -d {nodeBasePath} --chain={nodeChainSpecPath} --light --no-prometheus --no-telemetry");
 
-            //using var input = new InputStreamReader(nodeProcess.ErrorStream);
-            //using var reader = new BufferedReader(input);
+            _ = Task.Factory.StartNew(async () =>
+            {
+                using var input = new InputStreamReader(nodeProcess.ErrorStream);
+                using var reader = new BufferedReader(input);
 
-            //string line;
-            //var output = new System.Text.StringBuilder();
-            //while (!string.IsNullOrEmpty((line = reader.ReadLine())))
-            //{
-            //    output.AppendLine(line);
-            //}
-            //reader.Close();
-            //nodeProcess.WaitFor();
+                string line;
+                while (!string.IsNullOrEmpty((line = reader.ReadLine())))
+                {
+                    logs.OnNext(line);
+                }
+                reader.Close();
+                await nodeProcess.WaitForAsync();
+            }, TaskCreationOptions.LongRunning);
         }
 
         void StopNode()
@@ -128,13 +136,12 @@ namespace Parity.Substrate.EnterpriseSample.Services
             try
             {
                 var process = Runtime.GetRuntime().Exec(command);
-
                 using var input = new InputStreamReader(process.InputStream);
                 using var reader = new BufferedReader(input);
 
                 string line;
                 var output = new System.Text.StringBuilder();
-                while (!string.IsNullOrEmpty((line = await reader.ReadLineAsync())))
+                while (!string.IsNullOrEmpty(line = await reader.ReadLineAsync()))
                 {
                     output.AppendLine(line);
                 }
