@@ -1,4 +1,5 @@
-﻿using Parity.Substrate.EnterpriseSample.Services;
+﻿using Newtonsoft.Json.Linq;
+using Parity.Substrate.EnterpriseSample.Services;
 using Polkadot.Api;
 using Prism.Navigation;
 using System.Diagnostics;
@@ -38,6 +39,15 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
         {
             try
             {
+                var client = Polkadot.Api.PolkaApi.GetAppication();
+                client.Connect("ws://127.0.0.1:9944");
+                //var now = client.GetStorage("Timestamp", "Now");
+                var response = client.GetStorage("ProductTracking", "EventCount");
+                var result = JObject.Parse(response)["result"].ToString().Substring(2);
+                var count = Polkadot.Source.Utils.Scale.DecodeCompactInteger(ref result).Value;
+                //
+                //var res = this.PolkadotApi.Request(new JObject { { "ProductTracking", "EventCount" } });
+
             }
             catch (System.Exception ex)
             {
