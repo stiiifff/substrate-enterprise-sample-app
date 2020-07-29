@@ -2,9 +2,15 @@
 using Parity.Substrate.EnterpriseSample.Services;
 using Polkadot.Api;
 using Prism.Navigation;
+using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Windows.Input;
 using Xamarin.Forms;
+using System.Globalization;
+using Polkadot.Source.Utils;
+using Polkadot.Utils;
+using Polkadot.DataStructs;
 
 namespace Parity.Substrate.EnterpriseSample.ViewModels
 {
@@ -42,12 +48,9 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
                 var client = Polkadot.Api.PolkaApi.GetAppication();
                 client.Connect("ws://127.0.0.1:9944");
                 //var now = client.GetStorage("Timestamp", "Now");
-                var response = client.GetStorage("ProductTracking", "EventCount");
-                var result = JObject.Parse(response)["result"].ToString().Substring(2);
-                var count = Polkadot.Source.Utils.Scale.DecodeCompactInteger(ref result).Value;
-                //
-                //var res = this.PolkadotApi.Request(new JObject { { "ProductTracking", "EventCount" } });
-
+                var response = client.GetStorage<Address>(new Address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"), "ProductRegistry", "ProductsOfOrganization");
+                //var result = Converters.FromHex(JObject.Parse(response)["result"].ToString());
+                Trace.WriteLine(response);
             }
             catch (System.Exception ex)
             {
