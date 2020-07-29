@@ -11,7 +11,7 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
     {
         private readonly IDisposable logSubscription;
 
-        public NodeLogsViewModel(INavigationService navigationService, ILightClient lightClient, IJsonRpc polkadotApi)
+        public NodeLogsViewModel(INavigationService navigationService, ILightClient lightClient, IApplication polkadotApi)
             : base(navigationService, lightClient, polkadotApi)
         {
             Title = "Node logs";

@@ -100,6 +100,9 @@
       <Version>1.5.3.2</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Forms" Version="4.7.0.968" />
+    <PackageReference Include="OneOf">
+      <Version>2.1.155</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />

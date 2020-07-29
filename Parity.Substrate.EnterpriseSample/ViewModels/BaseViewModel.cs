@@ -10,7 +10,7 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
         bool isBusy = false;
         bool isReady = true;
 
-        public BaseViewModel(INavigationService navigationService, ILightClient lightClient, IJsonRpc polkadotApi)
+        public BaseViewModel(INavigationService navigationService, ILightClient lightClient, IApplication polkadotApi)
         {
             NavigationService = navigationService;
             LightClient = lightClient;
@@ -20,7 +20,7 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
         protected App App => ((App)Xamarin.Forms.Application.Current);
         protected INavigationService NavigationService { get; private set; }
         public ILightClient LightClient { get; }
-        public IJsonRpc PolkadotApi { get; }
+        public IApplication PolkadotApi { get; }
 
         public bool IsBusy
         {

@@ -20,7 +20,7 @@ namespace Parity.Substrate.EnterpriseSample
         public App(IPlatformInitializer initializer) : base(initializer) { }
 
         public bool IsPolkadotApiConnected { get; private set; }
-        public IJsonRpc PolkadotApi => Container.Resolve<IJsonRpc>();
+        public IApplication PolkadotApi => Container.Resolve<IApplication>();
         public ILightClient LightClient => Container.Resolve<ILightClient>();
 
         internal bool ConnectToNode()

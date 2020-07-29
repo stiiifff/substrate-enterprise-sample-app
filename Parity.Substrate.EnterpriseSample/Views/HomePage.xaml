@@ -25,5 +25,12 @@
                 TextColor="White"
                 VerticalOptions="Center"
                 HorizontalOptions="Center"/>
+        <Button Margin="0,10,0,0" Text="Submit extrinsic"
+                Command="{Binding SubmitExtrinsicCommand}"
+                BackgroundColor="{StaticResource Primary}"
+                TextColor="White"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"/>
+        <ActivityIndicator IsRunning="{Binding IsBusy}" Color="#ff1864" IsVisible="{Binding IsBusy}"/>
     </StackLayout>
 </ContentPage>

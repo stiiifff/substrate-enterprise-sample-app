@@ -1,21 +1,17 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using Parity.Substrate.EnterpriseSample.Services;
 using Polkadot.Api;
 using Polkadot.Data;
 using Prism.Navigation;
 using Prism.Services;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using Xamarin.Forms;
 
 namespace Parity.Substrate.EnterpriseSample.ViewModels
 {
     public class AboutViewModel : BaseViewModel
     {
-        public AboutViewModel(INavigationService navigationService, IDeviceService device, ILightClient lightClient, IJsonRpc polkadotApi)
+        public AboutViewModel(INavigationService navigationService, IDeviceService device, ILightClient lightClient, IApplication polkadotApi)
             : base(navigationService, lightClient, polkadotApi)
         {
             Title = "About";
@@ -89,36 +85,12 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
 
         public SystemInfo GetSystemInfo()
         {
-            var systemNameQuery = JObject.FromObject(new { method = "system_name", @params = new JArray { } });
-            var systemNameJson = PolkadotApi.Request(systemNameQuery);
-
-            var systemChainQuery = new JObject { { "method", "system_chain" }, { "params", new JArray { } } };
-            var systemChainJson = PolkadotApi.Request(systemChainQuery);
-
-            var systemVersionQuery = new JObject { { "method", "system_version" }, { "params", new JArray { } } };
-            var systemVersionJson = PolkadotApi.Request(systemVersionQuery);
-
-            return new SystemInfo
-            {
-                ChainName = systemNameJson.Value<string>("result"),
-                ChainId = systemChainJson.Value<string>("result"),
-                Version = systemVersionJson.Value<string>("result"),
-            };
+            return PolkadotApi.GetSystemInfo();
         }
 
         public PeersInfo GetSystemPeers()
         {
-            JObject query = new JObject { { "method", "system_peers" },
-                                          { "params", new JArray { } } };
-            JObject response = PolkadotApi.Request(query);
-
-            var peers = JsonConvert.DeserializeObject<List<PeerInfo>>(response["result"].ToString());
-
-            return new PeersInfo
-            {
-                Count = peers.Count,
-                Peers = peers.ToArray()
-            };
+            return PolkadotApi.GetSystemPeers();
         }
     }
 }

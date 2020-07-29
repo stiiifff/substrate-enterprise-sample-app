@@ -46,9 +46,9 @@ namespace Parity.Substrate.EnterpriseSample.Droid
 
         public void RegisterTypes(IContainerRegistry container)
         {
-            var logger = new Logger();
-            var jsonrpc = new JsonRpc(new Wsclient(logger), logger, new JsonRpcParams { JsonrpcVersion = "2.0" });
-            container.RegisterInstance<IJsonRpc>(jsonrpc);
+            //var logger = new Logger();
+            //var jsonrpc = new JsonRpc(new Wsclient(logger), logger, new JsonRpcParams { JsonrpcVersion = "2.0" });
+            container.RegisterInstance<IApplication>(PolkaApi.GetApplication());
             container.RegisterInstance<ILightClient>(new LightClient(assets));
         }
     }
