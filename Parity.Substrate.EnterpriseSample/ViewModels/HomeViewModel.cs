@@ -45,7 +45,7 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
         {
             try
             {
-                var client = Polkadot.Api.PolkaApi.GetAppication();
+                var client = Polkadot.Api.PolkaApi.GetApplication();
                 client.Connect("ws://127.0.0.1:9944");
                 //var now = client.GetStorage("Timestamp", "Now");
                 var response = client.GetStorage<Address>(new Address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"), "ProductRegistry", "ProductsOfOrganization");
