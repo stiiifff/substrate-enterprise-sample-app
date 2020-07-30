@@ -89,9 +89,9 @@ namespace Parity.Substrate.EnterpriseSample.Services
         void StartNode()
         {
             // Light client
-            nodeProcess = StartProcess($"{nodeBinPath} -d {nodeBasePath} --chain={nodeChainSpecPath} --light --no-prometheus --no-telemetry");
+            //nodeProcess = StartProcess($"{nodeBinPath} -d {nodeBasePath} --chain={nodeChainSpecPath} --light --no-prometheus --no-telemetry");
             // Full node
-            //nodeProcess = StartProcess($"{nodeBinPath} -d {nodeBasePath} --chain={nodeChainSpecPath} --no-prometheus --no-telemetry");
+            nodeProcess = StartProcess($"{nodeBinPath} -d {nodeBasePath} --chain={nodeChainSpecPath} --no-prometheus --no-telemetry");
 
             _ = Task.Factory.StartNew(async () =>
             {

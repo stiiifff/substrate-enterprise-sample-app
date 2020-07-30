@@ -57,7 +57,7 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
                     App.ConnectToNode();
                 SystemInfo = GetSystemInfo();
                 PeersInfo = GetSystemPeers();
-                Device.StartTimer(TimeSpan.FromSeconds(10), RefreshPeers);
+                //Device.StartTimer(TimeSpan.FromSeconds(10), RefreshPeers);
             }
             catch (Exception ex)
             {

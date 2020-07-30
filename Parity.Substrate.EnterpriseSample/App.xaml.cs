@@ -8,6 +8,8 @@ using Xamarin.Essentials.Implementation;
 using Parity.Substrate.EnterpriseSample.Views;
 using Parity.Substrate.EnterpriseSample.Services;
 using Parity.Substrate.EnterpriseSample.ViewModels;
+using System.Threading.Tasks;
+using System;
 
 namespace Parity.Substrate.EnterpriseSample
 {
@@ -55,7 +57,9 @@ namespace Parity.Substrate.EnterpriseSample
         {
             InitializeComponent();
 
-            _ = LightClient.InitAsync().ContinueWith(async _ => await LightClient.StartAsync());
+            _ = LightClient.InitAsync()
+                .ContinueWith(async _ => await Task.Delay(TimeSpan.FromSeconds(5)))
+                .ContinueWith(async _ => await LightClient.StartAsync());
 
             await NavigationService.NavigateAsync("NavigationPage/MainPage");
         }
