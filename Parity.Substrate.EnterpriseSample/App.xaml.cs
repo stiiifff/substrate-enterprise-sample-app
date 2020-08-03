@@ -49,6 +49,7 @@ namespace Parity.Substrate.EnterpriseSample
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<MainPage>();
             containerRegistry.RegisterForNavigation<HomePage, HomeViewModel>();
+            containerRegistry.RegisterForNavigation<TrackingPage, TrackingViewModel>();
             containerRegistry.RegisterForNavigation<AboutPage, AboutViewModel>();
             containerRegistry.RegisterForNavigation<NodeLogsPage, NodeLogsViewModel>();
         }

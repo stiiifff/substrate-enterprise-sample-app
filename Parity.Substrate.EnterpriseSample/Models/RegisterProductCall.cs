@@ -1,5 +1,5 @@
-﻿using System;
-using System.Numerics;
+﻿using OneOf;
+using Polkadot.BinaryContracts;
 using Polkadot.BinarySerializer;
 using Polkadot.BinarySerializer.Converters;
 using Polkadot.DataStructs;
@@ -15,17 +15,14 @@ namespace Parity.Substrate.EnterpriseSample.Models
         public PublicKey Owner { get; set; }
 
         [Serialize(2)]
-        public byte Props { get; set; }
+        [OneOfConverter]
+        public OneOf<Empty,ProductPropertyList> Props { get; set; }
 
-        public RegisterProductCall()
-        {
-        }
-
-        public RegisterProductCall(Identifier productId, PublicKey owner)
+        public RegisterProductCall(Identifier productId, PublicKey owner, OneOf<Empty, ProductPropertyList> props)
         {
             ProductId = productId;
             Owner = owner;
-            Props = new byte();
+            Props = props;
         }
     }
 }

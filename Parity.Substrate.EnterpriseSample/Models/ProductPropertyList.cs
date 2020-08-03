@@ -3,15 +3,15 @@ using Polkadot.BinarySerializer.Converters;
 
 namespace Parity.Substrate.EnterpriseSample.Models
 {
-    public class ProductIdList
+    public class ProductPropertyList
     {
         [Serialize(0)]
         [PrefixedArrayConverter]
-        public Identifier[] ProductIds;
+        public ProductProperty[] Props;
 
-        public ProductIdList()
+        public ProductPropertyList(ProductProperty[] props)
         {
-            ProductIds = new Identifier[0];
+            Props = props;
         }
     }
 }

@@ -9,7 +9,19 @@
             NavigationPage.HasNavigationBar="False">
 
     <TabbedPage.Children>
-        <NavigationPage Title="Home">
+        <NavigationPage Title="Tracking">
+            <x:Arguments>
+                <views:TrackingPage />
+            </x:Arguments>
+            <NavigationPage.Icon>
+                <OnPlatform x:TypeArguments="FileImageSource">
+                    <On Platform="iOS" Value="tab_feed.png"/>
+                </OnPlatform>
+            </NavigationPage.Icon>
+            
+        </NavigationPage>
+
+        <NavigationPage Title="Manage">
             <x:Arguments>
                 <views:HomePage />
             </x:Arguments>
@@ -21,7 +33,7 @@
             
         </NavigationPage>
 
-        <NavigationPage Title="About">
+        <NavigationPage Title="Settings">
             <x:Arguments>
                 <views:AboutPage />
             </x:Arguments>
