@@ -5,7 +5,7 @@ using Prism.Navigation;
 
 namespace Parity.Substrate.EnterpriseSample.ViewModels
 {
-    public class BaseViewModel : BindableBase, IInitialize, INavigationAware, IDestructible
+    public abstract class BaseViewModel : BindableBase, IInitialize, INavigationAware, IDestructible
     {
         bool isBusy = false;
         bool isReady = true;

@@ -6,43 +6,11 @@
             mc:Ignorable="d"
             xmlns:views="clr-namespace:Parity.Substrate.EnterpriseSample.Views"
             x:Class="Parity.Substrate.EnterpriseSample.Views.MainPage"
-            NavigationPage.HasNavigationBar="False">
-
+            Title="{Binding Title}">
     <TabbedPage.Children>
-        <NavigationPage Title="Tracking">
-            <x:Arguments>
-                <views:TrackingPage />
-            </x:Arguments>
-            <NavigationPage.Icon>
-                <OnPlatform x:TypeArguments="FileImageSource">
-                    <On Platform="iOS" Value="tab_feed.png"/>
-                </OnPlatform>
-            </NavigationPage.Icon>
-            
-        </NavigationPage>
-
-        <NavigationPage Title="Manage">
-            <x:Arguments>
-                <views:HomePage />
-            </x:Arguments>
-            <NavigationPage.Icon>
-                <OnPlatform x:TypeArguments="FileImageSource">
-                    <On Platform="iOS" Value="tab_feed.png"/>
-                </OnPlatform>
-            </NavigationPage.Icon>
-            
-        </NavigationPage>
-
-        <NavigationPage Title="Settings">
-            <x:Arguments>
-                <views:AboutPage />
-            </x:Arguments>
-            <NavigationPage.Icon>
-                <OnPlatform x:TypeArguments="FileImageSource">
-                    <On Platform="iOS" Value="tab_about.png"/>
-                </OnPlatform>
-            </NavigationPage.Icon>            
-        </NavigationPage>
+        <views:TrackingPage />
+        <views:ManagePage />
+        <views:SettingsPage />
     </TabbedPage.Children>
 
 </TabbedPage>

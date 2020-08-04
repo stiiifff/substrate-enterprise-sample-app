@@ -1,5 +1,4 @@
-﻿using Prism.Navigation;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace Parity.Substrate.EnterpriseSample.Views
@@ -11,11 +10,11 @@ namespace Parity.Substrate.EnterpriseSample.Views
         {
             InitializeComponent();
         }
-        
-        protected override void OnCurrentPageChanged()
+
+        protected override void OnAppearing()
         {
-            base.OnCurrentPageChanged();
-            ((CurrentPage as NavigationPage)?.CurrentPage?.BindingContext as INavigatedAware)?.OnNavigatedTo(new NavigationParameters());
+            base.OnAppearing();
+            ((NavigationPage)Application.Current.MainPage).BarBackgroundColor = Color.FromHex("231F20");
         }
     }
 }

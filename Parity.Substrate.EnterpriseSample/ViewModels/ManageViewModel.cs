@@ -16,12 +16,12 @@ using Xamarin.Forms;
 
 namespace Parity.Substrate.EnterpriseSample.ViewModels
 {
-    public class HomeViewModel : BaseViewModel
+    public class ManageViewModel : TabViewModel
     {
-        public HomeViewModel(INavigationService navigationService, ILightClient lightClient, IApplication polkadotApi)
+        public ManageViewModel(INavigationService navigationService, ILightClient lightClient, IApplication polkadotApi)
             : base(navigationService, lightClient, polkadotApi)
         {
-            Title = "Home";
+            Title = "Manage";
             QueryChainStateCommand = new Command(QueryChainState);
             SignTransferCommand = new Command(SubmitTransferExtrinsic);
             SubmitExtrinsicCommand = new Command(SubmitRegisterShipmentExtrinsicAsync);

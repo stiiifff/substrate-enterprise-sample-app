@@ -9,14 +9,22 @@ using Prism.Services;
 
 namespace Parity.Substrate.EnterpriseSample.ViewModels
 {
-    public class AboutViewModel : BaseViewModel
+    public class SettingsViewModel : TabViewModel
     {
-        public AboutViewModel(INavigationService navigationService, IDeviceService device, ILightClient lightClient, IApplication polkadotApi)
+        public SettingsViewModel(INavigationService navigationService, IDeviceService device, ILightClient lightClient, IApplication polkadotApi)
             : base(navigationService, lightClient, polkadotApi)
         {
-            Title = "About";
+            Title = "Settings";
             ApplicationVersion = $"{Xamarin.Essentials.AppInfo.Name} v{Xamarin.Essentials.AppInfo.Version}";
             Device = device;
+
+            IsActiveChanged += OnIsActiveChanged;
+        }
+
+        private void OnIsActiveChanged(object sender, EventArgs e)
+        {
+            if (IsActive)
+                LoadData();
         }
 
         private string applicationVersion;
@@ -40,12 +48,6 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
         {
             get { return systemInfo; }
             set { SetProperty(ref systemInfo, value); }
-        }
-
-        public override async void OnNavigatedTo(INavigationParameters parameters)
-        {
-            base.OnNavigatedTo(parameters);
-            await Task.Run(() => LoadData());
         }
 
         internal void LoadData()

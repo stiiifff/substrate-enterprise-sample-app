@@ -6,14 +6,23 @@
              xmlns:prism="http://prismlibrary.com"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="Parity.Substrate.EnterpriseSample.Views.TrackingPage"
-             NavigationPage.HasNavigationBar="False">
-    <ContentPage.Content>
-        <ListView ItemsSource="{Binding Shipments}">
+             Title="{Binding Title}">
+
+    <StackLayout Spacing="0">
+        <Label Text="Shipment Listing" Style="{StaticResource headerStyle}" />
+        <ListView ItemsSource="{Binding Shipments}"
+                  IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}"
+                  IsRefreshing="{Binding IsRefreshing, Mode=TwoWay}"
+                  IsVisible="{Binding IsReady}"
+                  SelectedItem="{Binding SelectedShipment}"
+                  SeparatorVisibility="None">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <TextCell Text="{Binding ShipmentId}"/>
+                    <TextCell Text="{Binding ShipmentId}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-    </ContentPage.Content>
+        <ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource Accent}" IsVisible="{Binding IsBusy}"
+                           VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+    </StackLayout>
 </ContentPage>

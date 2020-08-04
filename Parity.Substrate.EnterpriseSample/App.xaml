@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xaml-comp compile="true" ?>
 <prism:PrismApplication xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
@@ -9,10 +10,21 @@
     <Application.Resources>
         <ResourceDictionary>
             <!--Global Styles-->
-            <Color x:Key="NavigationPrimary">#2196F3</Color>
+            <Color x:Key="Primary">#222222</Color>
+            <Color x:Key="Accent">#ff1864</Color>
+            <Color x:Key="LightTextColor">#999999</Color>
+
             <Style TargetType="NavigationPage">
-                <Setter Property="BarBackgroundColor" Value="{StaticResource NavigationPrimary}" />
+                <Setter Property="BarBackgroundColor" Value="{StaticResource Primary}" />
                 <Setter Property="BarTextColor" Value="White" />
+            </Style>
+
+            <Style x:Key="headerStyle" TargetType="Label">
+                <Setter Property="BackgroundColor" Value="{StaticResource Accent}" />
+                <Setter Property="TextColor" Value="White"/>
+                <Setter Property="FontSize" Value="Subtitle"/>
+                <Setter Property="Padding" Value="8"/>
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
             </Style>
         </ResourceDictionary>
     </Application.Resources>

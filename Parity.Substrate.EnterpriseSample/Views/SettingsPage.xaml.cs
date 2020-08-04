@@ -4,9 +4,9 @@ using Xamarin.Forms.Xaml;
 namespace Parity.Substrate.EnterpriseSample.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class AboutPage : ContentPage
+    public partial class SettingsPage : ContentPage
     {
-        public AboutPage()
+        public SettingsPage()
         {
             InitializeComponent();
         }

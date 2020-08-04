@@ -6,17 +6,16 @@
              xmlns:prism="http://prismlibrary.com"
              prism:ViewModelLocator.AutowireViewModel="True"
              mc:Ignorable="d"
-             x:Class="Parity.Substrate.EnterpriseSample.Views.HomePage"
-             Title="{Binding Title}"
-             NavigationPage.HasNavigationBar="False">
+             x:Class="Parity.Substrate.EnterpriseSample.Views.ManagePage"
+             Title="{Binding Title}">
     
-    <ContentPage.Resources>
+    <!--<ContentPage.Resources>
         <ResourceDictionary>
             <Color x:Key="Primary">#222222</Color>
             <Color x:Key="Accent">#231F20</Color>
             <Color x:Key="LightTextColor">#999999</Color>
         </ResourceDictionary>
-    </ContentPage.Resources>
+    </ContentPage.Resources>-->
 
     <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="Fill">
         <Button Margin="0,10,0,0" Text="Query chain state"

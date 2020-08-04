@@ -4,14 +4,13 @@ using Android.Content.Res;
 using Android.OS;
 using Android.Runtime;
 using Parity.Substrate.EnterpriseSample.Services;
-using Polkadot;
 using Polkadot.Api;
 using Prism;
 using Prism.Ioc;
 
 namespace Parity.Substrate.EnterpriseSample.Droid
 {
-    [Activity(Label = "Parity.Substrate.EnterpriseSample", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "Substrate Enterprise Sample", Icon = "@mipmap/launcher_foreground", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         protected override void OnCreate(Bundle savedInstanceState)

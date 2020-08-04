@@ -10,9 +10,11 @@ using Parity.Substrate.EnterpriseSample.Services;
 using Parity.Substrate.EnterpriseSample.ViewModels;
 using System.Threading.Tasks;
 using System;
+using Xamarin.Forms.Xaml;
 
 namespace Parity.Substrate.EnterpriseSample
 {
+    [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class App
     {
         const string NodeUrl = "ws://127.0.0.1:9944";
@@ -47,10 +49,11 @@ namespace Parity.Substrate.EnterpriseSample
             containerRegistry.RegisterSingleton<IAppInfo, AppInfoImplementation>();
 
             containerRegistry.RegisterForNavigation<NavigationPage>();
-            containerRegistry.RegisterForNavigation<MainPage>();
-            containerRegistry.RegisterForNavigation<HomePage, HomeViewModel>();
+            containerRegistry.RegisterForNavigation<MainPage, MainViewModel>();
             containerRegistry.RegisterForNavigation<TrackingPage, TrackingViewModel>();
-            containerRegistry.RegisterForNavigation<AboutPage, AboutViewModel>();
+            containerRegistry.RegisterForNavigation<ManagePage, ManageViewModel>();
+            containerRegistry.RegisterForNavigation<ShipmentPage, ShipmentViewModel>();
+            containerRegistry.RegisterForNavigation<SettingsPage, SettingsViewModel>();
             containerRegistry.RegisterForNavigation<NodeLogsPage, NodeLogsViewModel>();
         }
 
@@ -62,7 +65,7 @@ namespace Parity.Substrate.EnterpriseSample
                 .ContinueWith(async _ => await Task.Delay(TimeSpan.FromSeconds(5)))
                 .ContinueWith(async _ => await LightClient.StartAsync());
 
-            await NavigationService.NavigateAsync("NavigationPage/MainPage");
+            await NavigationService.NavigateAsync("/NavigationPage/MainPage");
         }
 
         protected override async void CleanUp()
