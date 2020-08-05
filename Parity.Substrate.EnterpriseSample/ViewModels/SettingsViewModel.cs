@@ -21,10 +21,10 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             IsActiveChanged += OnIsActiveChanged;
         }
 
-        private void OnIsActiveChanged(object sender, EventArgs e)
+        private async void OnIsActiveChanged(object sender, EventArgs e)
         {
-            if (IsActive)
-                LoadData();
+            if (IsActive && App.IsPolkadotApiConnected)
+                await LoadDataAsync();
         }
 
         private string applicationVersion;
@@ -50,38 +50,32 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             set { SetProperty(ref systemInfo, value); }
         }
 
-        internal void LoadData()
+        internal async Task LoadDataAsync()
         {
             IsBusy = true;
             try
             {
-                if (!App.IsPolkadotApiConnected)
-                    App.ConnectToNode();
-                SystemInfo = GetSystemInfo();
-                PeersInfo = GetSystemPeers();
-                //Device.StartTimer(TimeSpan.FromSeconds(10), RefreshPeers);
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine(ex.ToString());
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        var sys = GetSystemInfo();
+                        var peers = GetSystemPeers();
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            SystemInfo = sys;
+                            PeersInfo = peers;
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.WriteLine(ex.ToString());
+                    }
+                });
             }
             finally
             {
                 IsBusy = false;
-            }
-        }
-
-        private bool RefreshPeers()
-        {
-            try
-            {
-                PeersInfo = GetSystemPeers();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine(ex.ToString());
-                return false;
             }
         }
 

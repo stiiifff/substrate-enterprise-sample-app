@@ -23,7 +23,6 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
 
         public ObservableCollection<LogRecord> Logs { get; } = new ObservableCollection<LogRecord>();
 
-
         public override void OnNavigatedFrom(INavigationParameters parameters)
         {
             logSubscription.Dispose();

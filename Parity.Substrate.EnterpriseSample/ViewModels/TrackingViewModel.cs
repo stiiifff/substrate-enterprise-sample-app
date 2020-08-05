@@ -9,7 +9,7 @@ using Parity.Substrate.EnterpriseSample.Services;
 using Polkadot.Api;
 using Polkadot.DataStructs;
 using Polkadot.Utils;
-using Prism;
+using Prism.Events;
 using Prism.Navigation;
 using Prism.Services;
 using Xamarin.Forms;
@@ -18,23 +18,29 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
 {
     public class TrackingViewModel : TabViewModel
     {
+        readonly SubscriptionToken eventSubs;
+
         public TrackingViewModel(INavigationService navigationService,
-            IDeviceService device, ILightClient lightClient, IApplication polkadotApi)
+            IDeviceService device, ILightClient lightClient, IApplication polkadotApi,
+            IEventAggregator eventAggregator)
             : base(navigationService, lightClient, polkadotApi)
         {
             Device = device;
+            EventAggregator = eventAggregator;
             Title = "Track";            
             RefreshCommand = new Command(async () => await RefreshAsync());
-            IsActiveChanged += OnIsActiveChanged;
-        }
 
-        private async void OnIsActiveChanged(object sender, EventArgs e)
-        {
-            if (IsActive)
-                await LoadDataAsync();
+            IsActiveChanged += OnIsActiveChanged;
+
+            eventSubs = EventAggregator.GetEvent<ApiStatusEvent>().Subscribe(async status =>
+            {
+                if (status == ApiStatus.ApiReady)
+                    await LoadDataAsync();
+            });
         }
 
         public IDeviceService Device { get; }
+        public IEventAggregator EventAggregator { get; }
         public ICommand RefreshCommand { get; }
 
         bool isRefreshing;
@@ -68,9 +74,15 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             }
         }
 
+        async void OnIsActiveChanged(object sender, EventArgs e)
+        {
+            if (IsActive && App.IsPolkadotApiConnected)
+                await LoadDataAsync();
+        }
+
         async Task RefreshAsync()
         {
-            
+
             try
             {
                 await LoadDataAsync();
@@ -86,9 +98,6 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             IsBusy = true;
             try
             {
-                if (!App.IsPolkadotApiConnected)
-                    App.ConnectToNode();
-
                 await Task.Run(() =>
                 {
                     try
@@ -108,6 +117,12 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             {
                 IsBusy = false;
             }
+        }
+
+        public override void Destroy()
+        {
+            if (eventSubs != null)
+                EventAggregator.GetEvent<ApiStatusEvent>().Unsubscribe(eventSubs);
         }
     }
 }

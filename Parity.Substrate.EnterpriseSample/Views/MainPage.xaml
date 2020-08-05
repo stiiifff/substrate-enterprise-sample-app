@@ -7,10 +7,14 @@
             xmlns:views="clr-namespace:Parity.Substrate.EnterpriseSample.Views"
             x:Class="Parity.Substrate.EnterpriseSample.Views.MainPage"
             Title="{Binding Title}">
+
+    <TabbedPage.ToolbarItems>
+        <ToolbarItem Text="{Binding BestBlock}" />
+    </TabbedPage.ToolbarItems>
+
     <TabbedPage.Children>
         <views:TrackingPage />
         <views:ManagePage />
         <views:SettingsPage />
     </TabbedPage.Children>
-
 </TabbedPage>
