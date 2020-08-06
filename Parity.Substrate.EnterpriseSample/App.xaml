@@ -6,6 +6,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:prism="http://prismlibrary.com"
              mc:Ignorable="d"
+             xmlns:conv="clr-namespace:Parity.Substrate.EnterpriseSample.Converters"
              x:Class="Parity.Substrate.EnterpriseSample.App">
     <Application.Resources>
         <ResourceDictionary>
@@ -26,6 +27,9 @@
                 <Setter Property="Padding" Value="8"/>
                 <Setter Property="HorizontalTextAlignment" Value="Center" />
             </Style>
+
+            <!-- Value Converters -->
+            <conv:ShipmentOperationVisibility x:Key="shipmentOperationVisibility" />
         </ResourceDictionary>
     </Application.Resources>
 </prism:PrismApplication>

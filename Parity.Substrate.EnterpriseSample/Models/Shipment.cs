@@ -1,15 +1,26 @@
 ﻿using System.Numerics;
+using OneOf;
+using Polkadot.BinaryContracts;
 using Polkadot.BinarySerializer;
 using Polkadot.BinarySerializer.Converters;
 using Polkadot.DataStructs;
 
 namespace Parity.Substrate.EnterpriseSample.Models
 {
-    public enum ShipmentStatus
+    public class ShipmentStatus
     {
-        Pending,
-        InTransit,
-        Delivered
+        public class Pending
+        {
+            public override string ToString() => "Pending";
+        }
+        public class InTransit
+        {
+            public override string ToString() => "InTransit";
+        }
+        public class Delivered
+        {
+            public override string ToString() => "Delivered";
+        }
     }
 
     public class Shipment
@@ -21,7 +32,10 @@ namespace Parity.Substrate.EnterpriseSample.Models
         public PublicKey Owner { get; set; }
 
         [Serialize(2)]
-        public ShipmentStatus Status { get; set; }
+        [OneOfConverter]
+        public OneOf<ShipmentStatus.Pending,
+            ShipmentStatus.InTransit,
+            ShipmentStatus.Delivered> Status { get; set; }
 
         [Serialize(3)]
         public ProductIdList Products { get; set; }
@@ -30,8 +44,9 @@ namespace Parity.Substrate.EnterpriseSample.Models
         [CompactBigIntegerConverter]
         public BigInteger Registered { get; set; }
 
-        [Serialize(5)]
-        [CompactBigIntegerConverter]
-        public BigInteger Delivered { get; set; }
+        //[Serialize(5)]
+        //[OneOfConverter]
+        //[CompactBigIntegerConverter]
+        //public OneOf<Empty, BigInteger> Delivered { get; set; }
     }
 }

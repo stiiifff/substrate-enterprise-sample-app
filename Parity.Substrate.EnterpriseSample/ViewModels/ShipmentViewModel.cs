@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
-using OneOf;
 using Parity.Substrate.EnterpriseSample.Models;
 using Parity.Substrate.EnterpriseSample.Services;
 using Polkadot.Api;
-using Polkadot.BinaryContracts;
 using Polkadot.Utils;
 using Prism.Navigation;
 using Prism.Services;
@@ -30,11 +29,18 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             set { SetProperty(ref shipmentId, value, () => Title = $"Shipment {ShipmentId}"); }
         }
 
-        private Shipment shipment;
-        public Shipment Shipment
+        private ShipmentInfoViewModel shipment;
+        public ShipmentInfoViewModel Shipment
         {
             get { return shipment; }
             set { SetProperty(ref shipment, value); }
+        }
+
+        private bool shipmentOperationsVisible;
+        public bool ShipmentOperationsVisible
+        {
+            get { return shipmentOperationsVisible; }
+            set { SetProperty(ref shipmentOperationsVisible, value); }
         }
 
         public override void Initialize(INavigationParameters parameters)
@@ -60,10 +66,23 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
                 {
                     try
                     {
-                        var response = PolkadotApi.GetStorage(new Identifier(ShipmentId), "ProductTracking", "Shipments");
-                        var maybeShipment = PolkadotApi.Serializer.Deserialize<OneOf<Shipment,Empty>>(response.HexToByteArray());
-                        if (maybeShipment.IsT0)
-                            Device.BeginInvokeOnMainThread(() => Shipment = maybeShipment.AsT0);
+                        var param = PolkadotApi.Serializer.Serialize(new Identifier(ShipmentId));
+                        var paramKey = Hash.GetStorageKey(Polkadot.DataStructs.Hasher.BLAKE2, param, param.Length, PolkadotApi.Serializer);
+
+                        var response = PolkadotApi.GetStorage(paramKey.Concat(param).ToArray(), "ProductTracking", "Shipments");
+                        var storedShipment = PolkadotApi.Serializer.Deserialize<Shipment>(response.HexToByteArray());
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            Shipment =
+                                new ShipmentInfoViewModel(
+                                    shipmentId: ShipmentId,
+                                    owner: AddressUtils.GetAddrFromPublicKey(storedShipment.Owner),
+                                    status: storedShipment.Status.Value.ToString(),
+                                    products: storedShipment.Products.ProductIds.Select(id => id.ToString()).ToArray(),
+                                    registered: new DateTime(long.Parse(storedShipment.Registered.ToString()))
+                                );
+                            ShipmentOperationsVisible = true;
+                        });
                     }
                     catch (Exception ex)
                     {

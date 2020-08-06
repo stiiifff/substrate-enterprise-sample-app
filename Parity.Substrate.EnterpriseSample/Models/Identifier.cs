@@ -8,7 +8,7 @@ namespace Parity.Substrate.EnterpriseSample.Models
     {
         [Serialize(0)]
         [PrefixedArrayConverter]
-        public byte[] Bytes;
+        public byte[] Bytes { get; set; }
 
         public Identifier() { }
 
