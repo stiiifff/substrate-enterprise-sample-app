@@ -7,7 +7,7 @@ namespace Parity.Substrate.EnterpriseSample.Models
     {
         [Serialize(0)]
         [PrefixedArrayConverter]
-        public Identifier[] ProductIds;
+        public Identifier[] ProductIds { get; set; }
 
         public ProductIdList()
         {

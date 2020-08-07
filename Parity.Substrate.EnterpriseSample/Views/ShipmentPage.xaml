@@ -16,37 +16,103 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
         </Grid>
-        <StackLayout Grid.Row="0" Padding="16,20,16,16" Spacing="10" VerticalOptions="FillAndExpand">
-            <Label FontSize="22" IsVisible="{Binding IsReady}">
+        <StackLayout Grid.Row="0" IsVisible="{Binding IsReady}" Padding="16,20,16,16" Spacing="10" VerticalOptions="FillAndExpand">
+            <Label FontSize="22">
                 <Label.FormattedText>
                     <FormattedString>
                         <FormattedString.Spans>
-                            <Span Text="Owner" FontAttributes="Bold" FontSize="22" />
+                            <Span Text="Owner:" FontAttributes="Bold" FontSize="22" />
                             <Span Text=" " />
-                            <Span Text="{Binding Shipment.Owner}" ForegroundColor="{StaticResource LightTextColor}" />
+                            <Span Text="{Binding Shipment.Owner}"
+                                    ForegroundColor="{StaticResource LightTextColor}"
+                                    FontSize="18" />
                         </FormattedString.Spans>
                     </FormattedString>
                 </Label.FormattedText>
             </Label>
+            <Label FontSize="22">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <FormattedString.Spans>
+                            <Span Text="Status:" FontAttributes="Bold" FontSize="22" />
+                            <Span Text=" " />
+                            <Span Text="{Binding Shipment.Status}"
+                                    ForegroundColor="{StaticResource Accent}"
+                                    FontSize="20" />
+                        </FormattedString.Spans>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+            <!--<Label FontSize="22" IsVisible="{Binding IsReady}">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <FormattedString.Spans>
+                            <Span Text="Products:" FontAttributes="Bold" FontSize="22" />
+                            <Span Text=" " />
+                            <Span Text="{Binding Shipment.Products}"
+                                    ForegroundColor="{StaticResource LightTextColor}"
+                                    FontSize="20" />
+                        </FormattedString.Spans>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>-->
+            <Label FontSize="22">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <FormattedString.Spans>
+                            <Span Text="Registered:" FontAttributes="Bold" FontSize="22" />
+                            <Span Text=" " />
+                            <Span Text="{Binding Shipment.Registered}"
+                                    ForegroundColor="{StaticResource LightTextColor}"
+                                    FontSize="20" />
+                        </FormattedString.Spans>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+            <Label FontSize="22">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <FormattedString.Spans>
+                            <Span Text="Delivered:" FontAttributes="Bold" FontSize="22" />
+                            <Span Text=" " />
+                            <Span Text="{Binding Shipment.Delivered}"
+                                    ForegroundColor="{StaticResource LightTextColor}"
+                                    FontSize="20" />
+                        </FormattedString.Spans>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+            <Label Text="Products" FontSize="22" FontAttributes="Bold" />
+            <BoxView HeightRequest="1" BackgroundColor="{StaticResource Accent}" />
+            <ListView ItemsSource="{Binding Shipment.Products}" SelectionMode="None">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextCell Text="{Binding ProductId}" Detail="{Binding Name}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackLayout>
-        <!--<StackLayout Padding="8" VerticalOptions="FillAndExpand">
-            <StackLayout Orientation="Horizontal">
-                <Label Text="Owner" FontSize="Medium" FontAttributes="Bold" />
-            </StackLayout>
-            <StackLayout Orientation="Horizontal">
-                <Label Text="Status" FontSize="Medium" FontAttributes="Bold" />
-            </StackLayout>
-            <StackLayout Orientation="Horizontal">
-                <Label Text="Registered" FontSize="Medium" FontAttributes="Bold" />
-            </StackLayout>
-            <StackLayout Orientation="Horizontal">
-                <Label Text="Delivered" FontSize="Medium" FontAttributes="Bold" />
-            </StackLayout>
-        </StackLayout>-->
-        <StackLayout Grid.Row="1" Padding="16,20,16,16" Spacing="10">
-            <Button Text="Pickup" TextColor="White" BackgroundColor="{StaticResource Primary}"/>
-            <Button Text="Scan" TextColor="White" BackgroundColor="{StaticResource Primary}"/>
-            <Button Text="Deliver" TextColor="White" BackgroundColor="{StaticResource Primary}"/>
+        <StackLayout Grid.Row="1" Padding="16,20,16,16" Spacing="10" IsVisible="{Binding ShipmentOperationsVisible}">
+            <Button Text="Shipment Journey" TextColor="White" BackgroundColor="{StaticResource Primary}"
+                    Command="{prism:NavigateTo 'ShipmentJourneyPage'}">
+                <Button.CommandParameter>
+                    <prism:NavigationParameters>
+                        <prism:NavigationParameter Key="shipmentId" Value="{Binding ShipmentId}" />
+                    </prism:NavigationParameters>
+                </Button.CommandParameter>
+            </Button>
+            <Button Text="Pickup" TextColor="White" BackgroundColor="{StaticResource Primary}"
+                    IsVisible="{Binding Path=Shipment.Status,
+                        Converter={StaticResource shipmentOperationVisibility},
+                        ConverterParameter='Pickup'}" />
+            <Button Text="Scan" TextColor="White" BackgroundColor="{StaticResource Primary}"
+                    IsVisible="{Binding Path=Shipment.Status,
+                        Converter={StaticResource shipmentOperationVisibility},
+                        ConverterParameter='Scan'}"/>
+            <Button Text="Deliver" TextColor="White" BackgroundColor="{StaticResource Primary}"
+                    IsVisible="{Binding Path=Shipment.Status,
+                        Converter={StaticResource shipmentOperationVisibility},
+                        ConverterParameter='Deliver'}"/>
             <!--<Button Margin="0,10,0,0" Text="Show Node logs"
                         Command="{prism:NavigateTo 'NavigationPage/NodeLogsPage', UseModalNavigation=True}"
                         BackgroundColor="{StaticResource Primary}"

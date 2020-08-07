@@ -21,16 +21,16 @@ namespace Parity.Substrate.EnterpriseSample.Services
         readonly ReplaySubject<string> logs = new ReplaySubject<string>(50);
 
         public LightClient(AssetManager assets,
-            ToastService toastService,
+            ToastService toast,
             IEventAggregator eventAggregator)
         {
             Assets = assets;
-            ToastService = toastService;
+            Toast = toast;
             EventAggregator = eventAggregator;
         }
 
         public AssetManager Assets { get; }
-        public ToastService ToastService { get; set; }
+        public ToastService Toast { get; set; }
         public IEventAggregator EventAggregator { get; }
         public bool IsInitialized { get; private set; }
 
@@ -58,7 +58,7 @@ namespace Parity.Substrate.EnterpriseSample.Services
 
         async Task<(string, string, string)> InstallNodeBinaryAsync()
         {
-            ToastService.ShowShortToast("Installing node ...");
+            Trace.WriteLine("Installing node ...");
 
             string basePath, binPath, chainSpecPath;
             try
@@ -102,24 +102,24 @@ namespace Parity.Substrate.EnterpriseSample.Services
             }
             catch (System.Exception ex)
             {
-                ToastService.ShowShortToast("Node installation failed.");
+                Toast.ShowShortToast("Node installation failed.");
                 EventAggregator.GetEvent<NodeStatusEvent>().Publish(NodeStatus.NodeError);
                 Trace.WriteLine(ex);
                 throw;
             }
 
-            ToastService.ShowShortToast("Node succesfully installed.");
+            Trace.WriteLine("Node succesfully installed.");
 
             return (basePath, binPath, chainSpecPath);
         }
 
         void StartNode()
         {
-            ToastService.ShowShortToast("Node starting ...");
+            Trace.WriteLine("Node starting ...");
 
             // Light client
             nodeProcess = StartProcess($"{nodeBinPath} -d {nodeBasePath} --chain={nodeChainSpecPath} --light --no-prometheus --no-telemetry");
-            // Full node
+            // Full node - Should give the possibility to run either light or full node in the UI
             //nodeProcess = StartProcess($"{nodeBinPath} -d {nodeBasePath} --chain={nodeChainSpecPath} --no-prometheus --no-telemetry");
 
             _ = Task.Factory.StartNew(async () =>
@@ -133,7 +133,7 @@ namespace Parity.Substrate.EnterpriseSample.Services
                 {
                     if (first)
                     {
-                        ToastService.ShowShortToast("Node is ready.");
+                        Toast.ShowShortToast("Node is ready.");
                         EventAggregator.GetEvent<NodeStatusEvent>().Publish(NodeStatus.NodeReady);
                         first = false;
                     }

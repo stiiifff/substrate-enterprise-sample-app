@@ -21,13 +21,13 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
         readonly SubscriptionToken eventSubs;
 
         public TrackingViewModel(INavigationService navigationService,
-            IDeviceService device, ILightClient lightClient, IApplication polkadotApi,
-            IEventAggregator eventAggregator)
+            ILightClient lightClient, IApplication polkadotApi,
+            IDeviceService device, IEventAggregator eventAggregator)
             : base(navigationService, lightClient, polkadotApi)
         {
             Device = device;
             EventAggregator = eventAggregator;
-            Title = "Track";            
+            Title = "Track";
             RefreshCommand = new Command(async () => await RefreshAsync());
 
             IsActiveChanged += OnIsActiveChanged;
@@ -50,20 +50,21 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             set { SetProperty(ref isRefreshing, value); }
         }
 
-        private ObservableCollection<ShipmentInfoViewModel> shipments = new ObservableCollection<ShipmentInfoViewModel>();
-        public ObservableCollection<ShipmentInfoViewModel> Shipments
+        private ObservableCollection<ShipmentInfo> shipments = new ObservableCollection<ShipmentInfo>();
+        public ObservableCollection<ShipmentInfo> Shipments
         {
             get { return shipments; }
             set { SetProperty(ref shipments, value); }
         }
 
-        ShipmentInfoViewModel selectedShipment;
-        public ShipmentInfoViewModel SelectedShipment
+        ShipmentInfo selectedShipment;
+        public ShipmentInfo SelectedShipment
         {
             get { return selectedShipment; }
             set
             {
-                SetProperty(ref selectedShipment, value, onChanged: () => {
+                SetProperty(ref selectedShipment, value, onChanged: () =>
+                {
                     if (SelectedShipment == null)
                         return;
                     Task.Delay(100).ContinueWith(_ => Device.BeginInvokeOnMainThread(
@@ -104,7 +105,7 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
                     {
                         var response = PolkadotApi.GetStorage(new Address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"), "ProductTracking", "ShipmentsOfOrganization");
                         var shipments = PolkadotApi.Serializer.Deserialize<ShipmentIdList>(response.HexToByteArray());
-                        var shipmentsObs = new ObservableCollection<ShipmentInfoViewModel>(shipments.ShipmentIds.Select(s => new ShipmentInfoViewModel(s.ToString())));
+                        var shipmentsObs = new ObservableCollection<ShipmentInfo>(shipments.ShipmentIds.Select(s => new ShipmentInfo { ShipmentId = s.ToString() }));
                         Device.BeginInvokeOnMainThread(() => Shipments = shipmentsObs);
                     }
                     catch (Exception ex)
