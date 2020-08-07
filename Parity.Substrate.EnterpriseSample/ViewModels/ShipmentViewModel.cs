@@ -2,13 +2,19 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Parity.Substrate.EnterpriseSample.Models;
 using Parity.Substrate.EnterpriseSample.Services;
 using Polkadot.Api;
+using Polkadot.BinaryContracts;
+using Polkadot.BinarySerializer;
+using Polkadot.DataStructs;
 using Polkadot.Utils;
 using Prism.Navigation;
 using Prism.Services;
+using Xamarin.Forms;
 
 namespace Parity.Substrate.EnterpriseSample.ViewModels
 {
@@ -21,10 +27,13 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
         {
             Device = device;
             Toast = toast;
+            PickupShipmentCommand = new Command(PickupShipmentAsync);
         }
 
         public IDeviceService Device { get; }
         public IToastService Toast { get; }
+
+        public ICommand PickupShipmentCommand { get; }
 
         private string shipmentId;
         public string ShipmentId
@@ -117,6 +126,68 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
                         Toast.ShowShortToast("Error loading shipment.");
                     }
                 });
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private async void PickupShipmentAsync()
+        {
+            IsBusy = true;
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    try
+                    {
+                        var ser = PolkadotApi.Serializer;
+
+                        var sender = new Address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY");
+                        //var pub = AddressUtils.GetPublicKeyFromAddr(sender);
+                        var secret = "0x33A6F3093F158A7109F679410BEF1A0C54168145E0CECB4DF006C1C2FFFB1F09925A225D97AA00682D6A59B95B18780C10D7032336E88F3442B42361F4A66011";
+
+                        var shipmentId = ser.Serialize(new Identifier(ShipmentId));
+                        var operation = Scale.EncodeCompactInteger(new BigInteger((int)ShippingOperation.Pickup));
+                        var timestamp = Scale.EncodeCompactInteger(new BigInteger(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()));
+                        var emptyArgs = new byte[2];
+
+                        var encodedExtrinsic = new byte[shipmentId.Length + operation.Length + timestamp.Length + emptyArgs.Length];
+                        shipmentId.CopyTo(encodedExtrinsic.AsMemory());
+                        operation.Bytes.CopyTo(encodedExtrinsic.AsMemory(shipmentId.Length));
+                        timestamp.Bytes.CopyTo(encodedExtrinsic.AsMemory(shipmentId.Length + (int)operation.Length));
+                        emptyArgs.CopyTo(encodedExtrinsic.AsMemory(shipmentId.Length + (int)operation.Length + (int)timestamp.Length));
+
+                        //var encodedExtrinsic = ser.Serialize(new TrackShipmentCall(
+                        //    new Identifier(ShipmentId),
+                        //    new byte(), // One zero byte == ShippingOperation.Pickup,
+                        //    DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                        //    new ReadPoint { Latitude = 0, Longitude = 0 },
+                        //    new ReadingList()));
+
+                        Trace.WriteLine(encodedExtrinsic.ToPrefixedHexString());
+
+                        var tcs = new TaskCompletionSource<string>();
+                        var sid = PolkadotApi.SubmitAndSubcribeExtrinsic(encodedExtrinsic,
+                            "ProductTracking", "track_shipment", sender, secret, str =>
+                            {
+                                Trace.WriteLine(str);
+                                tcs.SetResult(str);
+                            });
+
+                        var result = await tcs.Task.WithTimeout(TimeSpan.FromSeconds(30)).ConfigureAwait(false);
+                        PolkadotApi.UnsubscribeStorage(sid);
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.WriteLine(ex);
+                    }
+                });
+            }
+            catch (System.Exception ex)
+            {
+                Trace.WriteLine(ex);
             }
             finally
             {

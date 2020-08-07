@@ -102,6 +102,7 @@
                 </Button.CommandParameter>
             </Button>
             <Button Text="Pickup" TextColor="White" BackgroundColor="{StaticResource Primary}"
+                    Command="{Binding PickupShipmentCommand}"
                     IsVisible="{Binding Path=Shipment.Status,
                         Converter={StaticResource shipmentOperationVisibility},
                         ConverterParameter='Pickup'}" />
