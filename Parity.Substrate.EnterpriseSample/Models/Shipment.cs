@@ -41,12 +41,10 @@ namespace Parity.Substrate.EnterpriseSample.Models
         public ProductIdList Products { get; set; }
 
         [Serialize(4)]
-        [CompactBigIntegerConverter]
-        public BigInteger Registered { get; set; }
+        public long Registered { get; set; }
 
-        //[Serialize(5)]
-        //[OneOfConverter]
-        //[CompactBigIntegerConverter]
-        //public OneOf<Empty, BigInteger> Delivered { get; set; }
+        [Serialize(5)]
+        [OneOfConverter]
+        public OneOf<Empty, long> Delivered { get; set; }
     }
 }

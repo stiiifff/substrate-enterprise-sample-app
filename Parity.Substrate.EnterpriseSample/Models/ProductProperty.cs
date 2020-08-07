@@ -10,6 +10,8 @@ namespace Parity.Substrate.EnterpriseSample.Models
         [Serialize(1)]
         public Identifier Value { get; set; }
 
+        public ProductProperty() { }
+
         public ProductProperty(Identifier name, Identifier value)
         {
             Name = name;

@@ -43,6 +43,7 @@ namespace Parity.Substrate.EnterpriseSample
             containerRegistry.RegisterForNavigation<TrackingPage, TrackingViewModel>();
             containerRegistry.RegisterForNavigation<ManagePage, ManageViewModel>();
             containerRegistry.RegisterForNavigation<ShipmentPage, ShipmentViewModel>();
+            containerRegistry.RegisterForNavigation<ShipmentJourneyPage, ShipmentJourneyViewModel>();
             containerRegistry.RegisterForNavigation<SettingsPage, SettingsViewModel>();
             containerRegistry.RegisterForNavigation<NodeLogsPage, NodeLogsViewModel>();
         }

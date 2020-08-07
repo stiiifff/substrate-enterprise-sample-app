@@ -9,6 +9,8 @@ namespace Parity.Substrate.EnterpriseSample.Models
         [PrefixedArrayConverter]
         public ProductProperty[] Props { get; set; }
 
+        public ProductPropertyList() { }
+
         public ProductPropertyList(ProductProperty[] props)
         {
             Props = props;
