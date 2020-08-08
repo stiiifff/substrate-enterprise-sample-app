@@ -5,10 +5,10 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Newtonsoft.Json.Linq;
 using Parity.Substrate.EnterpriseSample.Models;
 using Parity.Substrate.EnterpriseSample.Services;
 using Polkadot.Api;
-using Polkadot.BinaryContracts;
 using Polkadot.BinarySerializer;
 using Polkadot.DataStructs;
 using Polkadot.Utils;
@@ -20,6 +20,8 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
 {
     public class ShipmentViewModel : BaseViewModel
     {
+        private string transactionSid;
+
         public ShipmentViewModel(INavigationService navigationService,
             ILightClient lightClient, IApplication polkadotApi,
             IDeviceService device, IToastService toast)
@@ -27,13 +29,13 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
         {
             Device = device;
             Toast = toast;
-            PickupShipmentCommand = new Command(PickupShipmentAsync);
+            TrackShipmentCommand = new Command(async (op) => await TrackShipmentAsync(Enum.Parse<ShippingOperation>((string)op)));
         }
 
         public IDeviceService Device { get; }
         public IToastService Toast { get; }
 
-        public ICommand PickupShipmentCommand { get; }
+        public ICommand TrackShipmentCommand { get; }
 
         private string shipmentId;
         public string ShipmentId
@@ -56,6 +58,27 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             set { SetProperty(ref shipmentOperationsVisible, value); }
         }
 
+        private bool transactionInProgress;
+        public bool TransactionInProgress
+        {
+            get { return transactionInProgress; }
+            set { SetProperty(ref transactionInProgress, value); }
+        }
+
+        private string transactionStatus;
+        public string TransactionStatus
+        {
+            get { return transactionStatus; }
+            set { SetProperty(ref transactionStatus, value); }
+        }
+
+        public float transactionProgress;
+        public float TransactionProgress
+        {
+            get { return transactionProgress; }
+            set { SetProperty(ref transactionProgress, value); }
+        }
+
         public override void Initialize(INavigationParameters parameters)
         {
             if (parameters != null && parameters.ContainsKey("shipmentId"))
@@ -68,6 +91,25 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
                 await LoadDataAsync();
         }
 
+        public override void OnNavigatedFrom(INavigationParameters parameters)
+        {
+            if (!string.IsNullOrEmpty(transactionSid))
+                PolkadotApi.UnsubscribeStorage(transactionSid);
+        }
+
+        T GetValueFromStorageMap<T>(string module, string storageMap, object key)
+        {
+            var param = PolkadotApi.Serializer.Serialize(key);
+            var paramKey = Hash.GetStorageKey(Hasher.BLAKE2, param, param.Length, PolkadotApi.Serializer);
+
+            var response = PolkadotApi.GetStorage(paramKey.Concat(param).ToArray(), module, storageMap);
+            return PolkadotApi.Serializer.Deserialize<T>(response.HexToByteArray());
+        }
+
+        Shipment GetShipment(string shipmentId) => GetValueFromStorageMap<Shipment>("ProductTracking", "Shipments", new Identifier(shipmentId));
+
+        Product GetProduct(string productId) => GetValueFromStorageMap<Product>("ProductRegistry", "Products", new Identifier(productId));
+
         internal async Task LoadDataAsync()
         {
             IsBusy = true;
@@ -77,20 +119,11 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
                 {
                     try
                     {
-                        var param = PolkadotApi.Serializer.Serialize(new Identifier(ShipmentId));
-                        var paramKey = Hash.GetStorageKey(Polkadot.DataStructs.Hasher.BLAKE2, param, param.Length, PolkadotApi.Serializer);
-
-                        var response = PolkadotApi.GetStorage(paramKey.Concat(param).ToArray(), "ProductTracking", "Shipments");
-                        var storedShipment = PolkadotApi.Serializer.Deserialize<Shipment>(response.HexToByteArray());
-
+                        var storedShipment = GetShipment(ShipmentId);
                         var products = new List<ProductInfo>();
                         foreach (var productId in storedShipment.Products.ProductIds)
                         {
-                            param = PolkadotApi.Serializer.Serialize(productId);
-                            paramKey = Hash.GetStorageKey(Polkadot.DataStructs.Hasher.BLAKE2, param, param.Length, PolkadotApi.Serializer);
-
-                            response = PolkadotApi.GetStorage(paramKey.Concat(param).ToArray(), "ProductRegistry", "Products");
-                            var storedProduct = PolkadotApi.Serializer.Deserialize<Product>(response.HexToByteArray());
+                            var storedProduct = GetProduct(productId.ToString());
                             products.Add(new ProductInfo
                             {
                                 ProductId = productId.ToString(),
@@ -133,66 +166,94 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             }
         }
 
-        private async void PickupShipmentAsync()
+        private async Task TrackShipmentAsync(ShippingOperation op)
         {
-            IsBusy = true;
-            try
+            TransactionProgress = 0.0f;
+            TransactionStatus = "";
+
+            await Task.Run(() =>
             {
-                await Task.Run(async () =>
+                try
                 {
-                    try
-                    {
-                        var ser = PolkadotApi.Serializer;
+                    var ser = PolkadotApi.Serializer;
 
-                        var sender = new Address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY");
-                        //var pub = AddressUtils.GetPublicKeyFromAddr(sender);
-                        var secret = "0x33A6F3093F158A7109F679410BEF1A0C54168145E0CECB4DF006C1C2FFFB1F09925A225D97AA00682D6A59B95B18780C10D7032336E88F3442B42361F4A66011";
+                    //TODO: Implement account management
+                    var sender = new Address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY");
+                    var secret = "0x33A6F3093F158A7109F679410BEF1A0C54168145E0CECB4DF006C1C2FFFB1F09925A225D97AA00682D6A59B95B18780C10D7032336E88F3442B42361F4A66011";
 
-                        var shipmentId = ser.Serialize(new Identifier(ShipmentId));
-                        var operation = Scale.EncodeCompactInteger(new BigInteger((int)ShippingOperation.Pickup));
-                        var timestamp = Scale.EncodeCompactInteger(new BigInteger(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()));
-                        var emptyArgs = new byte[2];
+                    var shipmentId = ser.Serialize(new Identifier(ShipmentId));
+                    //TODO: ProductTracking pallet should accept compact scale-encoded operation
+                    //var operation = Scale.EncodeCompactInteger(new BigInteger((int)op));
+                    var operation = new[] { Convert.ToByte(op) };
 
-                        var encodedExtrinsic = new byte[shipmentId.Length + operation.Length + timestamp.Length + emptyArgs.Length];
-                        shipmentId.CopyTo(encodedExtrinsic.AsMemory());
-                        operation.Bytes.CopyTo(encodedExtrinsic.AsMemory(shipmentId.Length));
-                        timestamp.Bytes.CopyTo(encodedExtrinsic.AsMemory(shipmentId.Length + (int)operation.Length));
-                        emptyArgs.CopyTo(encodedExtrinsic.AsMemory(shipmentId.Length + (int)operation.Length + (int)timestamp.Length));
+                    //TODO: ProductTracking pallet should accept compact scale-encoded timestamp
+                    //var timestamp = Scale.EncodeCompactInteger(new BigInteger(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()));
+                    var timestamp = BitConverter.GetBytes(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()).ToArray();
 
-                        //var encodedExtrinsic = ser.Serialize(new TrackShipmentCall(
-                        //    new Identifier(ShipmentId),
-                        //    new byte(), // One zero byte == ShippingOperation.Pickup,
-                        //    DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                        //    new ReadPoint { Latitude = 0, Longitude = 0 },
-                        //    new ReadingList()));
+                    //TODO: Allow to capture location, and input readings. Empty for now.
+                    var emptyArgs = new byte[2];
 
-                        Trace.WriteLine(encodedExtrinsic.ToPrefixedHexString());
+                    var encodedExtrinsic = new byte[shipmentId.Length + operation.Length + timestamp.Length + emptyArgs.Length];
+                    shipmentId.CopyTo(encodedExtrinsic.AsMemory());
+                    operation.CopyTo(encodedExtrinsic.AsMemory(shipmentId.Length));
+                    timestamp.CopyTo(encodedExtrinsic.AsMemory(shipmentId.Length + (int)operation.Length));
+                    emptyArgs.CopyTo(encodedExtrinsic.AsMemory(shipmentId.Length + (int)operation.Length + (int)timestamp.Length));
 
-                        var tcs = new TaskCompletionSource<string>();
-                        var sid = PolkadotApi.SubmitAndSubcribeExtrinsic(encodedExtrinsic,
-                            "ProductTracking", "track_shipment", sender, secret, str =>
+                    Trace.WriteLine(encodedExtrinsic.ToPrefixedHexString());
+
+                    transactionSid = PolkadotApi.SubmitAndSubcribeExtrinsic(encodedExtrinsic,
+                        "ProductTracking", "track_shipment", sender, secret, response =>
+                        {
+                            Trace.WriteLine(response);
+
+                            var res = JObject.Parse(response);
+                            if (res.Value<string>("subscription") != transactionSid ||
+                                !res.ContainsKey("result"))
+                                return;
+
+                            Device.BeginInvokeOnMainThread(() =>
                             {
-                                Trace.WriteLine(str);
-                                tcs.SetResult(str);
-                            });
+                                TransactionInProgress = true;
 
-                        var result = await tcs.Task.WithTimeout(TimeSpan.FromSeconds(30)).ConfigureAwait(false);
-                        PolkadotApi.UnsubscribeStorage(sid);
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.WriteLine(ex);
-                    }
-                });
-            }
-            catch (System.Exception ex)
-            {
-                Trace.WriteLine(ex);
-            }
-            finally
-            {
-                IsBusy = false;
-            }
+                                var result = res["result"];
+                                if (result is JValue value && (string)value.Value == "ready")
+                                {
+                                    TransactionStatus = "valid";
+                                    TransactionProgress = 0.25f;
+                                }
+                                else if (result is JObject resObj)
+                                {
+                                    if (resObj.ContainsKey("broadcast"))
+                                    {
+                                        TransactionStatus = "broadcasted to peers";
+                                        TransactionProgress = 0.5f;
+                                    }
+                                    else if (resObj.ContainsKey("inBlock"))
+                                    {
+                                        TransactionStatus = "in block " + resObj.Value<string>("inBlock");
+                                        TransactionProgress = 0.75f;
+                                    }
+                                    else if (resObj.ContainsKey("finalized"))
+                                    {
+                                        PolkadotApi.UnsubscribeStorage(transactionSid);
+                                        transactionSid = null;
+                                        TransactionStatus = "finalized";
+                                        TransactionProgress = 1.0f;
+
+                                        _ = Task.Delay(2000).ContinueWith(_ =>
+                                            Device.BeginInvokeOnMainThread(() =>
+                                                TransactionInProgress = false));
+                                    }
+                                }
+                            });
+                        });
+                }
+                catch (Exception ex)
+                {
+                    Trace.WriteLine(ex);
+                    Toast.ShowShortToast($"Error performing {op}");
+                }
+            });
         }
     }
 }

@@ -93,8 +93,10 @@
             </ListView>
         </StackLayout>
         <StackLayout Grid.Row="1" Padding="16,20,16,16" Spacing="10" IsVisible="{Binding ShipmentOperationsVisible}">
+            
             <Button Text="Shipment Journey" TextColor="White" BackgroundColor="{StaticResource Primary}"
-                    Command="{prism:NavigateTo 'ShipmentJourneyPage'}">
+                    Command="{prism:NavigateTo 'ShipmentJourneyPage'}"
+                    IsEnabled="{Binding TransactionInProgress, Converter={StaticResource notConverter}}">
                 <Button.CommandParameter>
                     <prism:NavigationParameters>
                         <prism:NavigationParameter Key="shipmentId" Value="{Binding ShipmentId}" />
@@ -102,24 +104,27 @@
                 </Button.CommandParameter>
             </Button>
             <Button Text="Pickup" TextColor="White" BackgroundColor="{StaticResource Primary}"
-                    Command="{Binding PickupShipmentCommand}"
+                    Command="{Binding TrackShipmentCommand}" CommandParameter="Pickup"
                     IsVisible="{Binding Path=Shipment.Status,
                         Converter={StaticResource shipmentOperationVisibility},
-                        ConverterParameter='Pickup'}" />
+                        ConverterParameter='Pickup'}"
+                    IsEnabled="{Binding TransactionInProgress, Converter={StaticResource notConverter}}" />
             <Button Text="Scan" TextColor="White" BackgroundColor="{StaticResource Primary}"
+                    Command="{Binding TrackShipmentCommand}" CommandParameter="Scan"
                     IsVisible="{Binding Path=Shipment.Status,
                         Converter={StaticResource shipmentOperationVisibility},
-                        ConverterParameter='Scan'}"/>
+                        ConverterParameter='Scan'}"
+                    IsEnabled="{Binding TransactionInProgress, Converter={StaticResource notConverter}}" />
             <Button Text="Deliver" TextColor="White" BackgroundColor="{StaticResource Primary}"
+                    Command="{Binding TrackShipmentCommand}" CommandParameter="Deliver"
                     IsVisible="{Binding Path=Shipment.Status,
                         Converter={StaticResource shipmentOperationVisibility},
-                        ConverterParameter='Deliver'}"/>
-            <!--<Button Margin="0,10,0,0" Text="Show Node logs"
-                        Command="{prism:NavigateTo 'NavigationPage/NodeLogsPage', UseModalNavigation=True}"
-                        BackgroundColor="{StaticResource Primary}"
-                        TextColor="White"
-                        VerticalOptions="EndAndExpand" />
-            <Label FontSize="10" Text="{Binding ApplicationVersion}" HorizontalOptions="Center"/>-->
+                        ConverterParameter='Deliver'}"
+                    IsEnabled="{Binding TransactionInProgress, Converter={StaticResource notConverter}}" />
+            <Label Text="{Binding TransactionStatus, StringFormat='Transaction status: {0}'}"
+                   IsVisible="{Binding TransactionInProgress}" />
+            <ProgressBar Progress="{Binding TransactionProgress}" ProgressColor="{StaticResource Accent}"
+                         IsVisible="{Binding TransactionInProgress}" />
         </StackLayout>
     </StackLayout>
 </ContentPage>

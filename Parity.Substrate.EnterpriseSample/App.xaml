@@ -30,6 +30,7 @@
 
             <!-- Value Converters -->
             <conv:ShipmentOperationVisibility x:Key="shipmentOperationVisibility" />
+            <conv:NotConverter x:Key="notConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </prism:PrismApplication>

@@ -118,9 +118,9 @@ namespace Parity.Substrate.EnterpriseSample.Services
             Trace.WriteLine("Node starting ...");
 
             // Light client
-            //nodeProcess = StartProcess($"{nodeBinPath} -d {nodeBasePath} --chain={nodeChainSpecPath} --light --no-prometheus --no-telemetry");
+            nodeProcess = StartProcess($"{nodeBinPath} -d {nodeBasePath} --chain={nodeChainSpecPath} --light --no-prometheus --no-telemetry");
             // Full node - Should give the possibility to run either light or full node in the UI
-            nodeProcess = StartProcess($"{nodeBinPath} -d {nodeBasePath} --chain={nodeChainSpecPath} --no-prometheus --no-telemetry");
+            //nodeProcess = StartProcess($"{nodeBinPath} -d {nodeBasePath} --chain={nodeChainSpecPath} --no-prometheus --no-telemetry");
 
             _ = Task.Factory.StartNew(async () =>
             {

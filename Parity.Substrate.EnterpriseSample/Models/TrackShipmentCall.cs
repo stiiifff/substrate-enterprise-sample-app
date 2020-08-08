@@ -13,8 +13,8 @@ namespace Parity.Substrate.EnterpriseSample.Models
         public byte Operation { get; set; }
 
         [Serialize(2)]
-        [CompactBigIntegerConverter]
-        public BigInteger Timestamp { get; set; }
+        //[CompactBigIntegerConverter]
+        public long Timestamp { get; set; }
 
         [Serialize(3)]
         public ReadPoint Location { get; set; }
@@ -28,7 +28,7 @@ namespace Parity.Substrate.EnterpriseSample.Models
         {
             ShipmentId = shipmentId;
             Operation = operation;
-            Timestamp = new BigInteger(timestamp);
+            Timestamp = timestamp;
             Location = location;
             Readings = readings;
         }
