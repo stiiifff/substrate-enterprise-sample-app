@@ -14,7 +14,7 @@
 
     <TabbedPage.Children>
         <views:TrackingPage />
-        <views:ManagePage />
+        <!--<views:ManagePage />-->
         <views:SettingsPage />
     </TabbedPage.Children>
 </TabbedPage>

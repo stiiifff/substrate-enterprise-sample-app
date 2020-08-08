@@ -148,6 +148,7 @@ namespace Parity.Substrate.EnterpriseSample.Services
         {
             if (nodeProcess != null)
             {
+
                 try
                 {
                     if (nodeProcess.IsAlive)

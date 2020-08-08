@@ -66,7 +66,7 @@ namespace Parity.Substrate.EnterpriseSample.Models
     {
         [Serialize(0)]
         [PrefixedArrayConverter]
-        public Reading[] Readings { get; set; }
+        public Reading[] Readings { get; set; } = new Reading[0];
     }
 
     public class Reading
