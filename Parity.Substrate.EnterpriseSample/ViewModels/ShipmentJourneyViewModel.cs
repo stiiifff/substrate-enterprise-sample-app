@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Parity.Substrate.EnterpriseSample.Models;
 using Parity.Substrate.EnterpriseSample.Services;
 using Polkadot.Api;
-using Polkadot.Utils;
 using Prism.Navigation;
 using Prism.Services;
 
@@ -52,6 +51,10 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             await LoadDataAsync();
         }
 
+        EventIndexList GetShippingEvents(string shipmentId) => GetValueFromStorageMap<EventIndexList>("ProductTracking", "EventsOfShipment", new Identifier(shipmentId));
+
+        ShippingEvent GetShippingEvent(EventIndex eventIdx) => GetValueFromStorageMap<ShippingEvent>("ProductTracking", "AllEvents", eventIdx);
+
         internal async Task LoadDataAsync()
         {
             IsBusy = true;
@@ -61,43 +64,14 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
                 {
                     try
                     {
-                        var param = PolkadotApi.Serializer.Serialize(new Identifier(ShipmentId));
-                        var paramKey = Hash.GetStorageKey(Polkadot.DataStructs.Hasher.BLAKE2, param, param.Length, PolkadotApi.Serializer);
-
-                        var response = PolkadotApi.GetStorage(paramKey.Concat(param).ToArray(), "ProductTracking", "EventsOfShipment");
-                        var eventIndexList = PolkadotApi.Serializer.Deserialize<EventIndexList>(response.HexToByteArray());
+                        var eventIndexList = GetShippingEvents(ShipmentId);
 
                         var events = new List<ShippingEvent>();
                         foreach (var eventIdx in eventIndexList.EventIndices)
                         {
-                            param = eventIdx.Value;
-                            paramKey = Hash.GetStorageKey(Polkadot.DataStructs.Hasher.BLAKE2, param, param.Length, PolkadotApi.Serializer);
-
-                            response = PolkadotApi.GetStorage(paramKey.Concat(param).ToArray(), "ProductTracking", "AllEvents");
-                            var @event = PolkadotApi.Serializer.Deserialize<ShippingEvent>(response.HexToByteArray());
-
+                            var @event = GetShippingEvent(eventIdx);
                             events.Add(@event);
                         }
-
-                        //var products = new List<ProductInfo>();
-                        //foreach (var productId in storedShipment.Products.ProductIds)
-                        //{
-                        //    param = PolkadotApi.Serializer.Serialize(productId);
-                        //    paramKey = Hash.GetStorageKey(Polkadot.DataStructs.Hasher.BLAKE2, param, param.Length, PolkadotApi.Serializer);
-
-                        //    response = PolkadotApi.GetStorage(paramKey.Concat(param).ToArray(), "ProductRegistry", "Products");
-                        //    var storedProduct = PolkadotApi.Serializer.Deserialize<Product>(response.HexToByteArray());
-                        //    products.Add(new ProductInfo
-                        //    {
-                        //        ProductId = productId.ToString(),
-                        //        Owner = AddressUtils.GetAddrFromPublicKey(storedProduct.Owner),
-                        //        Props = storedProduct.PropList.IsT1
-                        //            ? storedProduct.PropList.AsT1.Props.Select(p =>
-                        //                new ProductPropertyInfo { Name = p.Name.ToString(), Value = p.Value.ToString() }).ToArray()
-                        //            : new ProductPropertyInfo[0],
-                        //        Registered = DateTimeOffset.FromUnixTimeMilliseconds(storedProduct.Registered).LocalDateTime,
-                        //    });
-                        //}
 
                         Device.BeginInvokeOnMainThread(() =>
                         {

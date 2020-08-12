@@ -1,5 +1,8 @@
-﻿using Parity.Substrate.EnterpriseSample.Services;
+﻿using System.Linq;
+using Parity.Substrate.EnterpriseSample.Services;
 using Polkadot.Api;
+using Polkadot.DataStructs;
+using Polkadot.Utils;
 using Prism.Mvvm;
 using Prism.Navigation;
 
@@ -62,6 +65,15 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
         public virtual void Destroy()
         {
 
+        }
+
+        protected T GetValueFromStorageMap<T>(string module, string storageMap, object key)
+        {
+            var param = PolkadotApi.Serializer.Serialize(key);
+            var paramKey = Hash.GetStorageKey(Hasher.BLAKE2, param, param.Length, PolkadotApi.Serializer);
+
+            var response = PolkadotApi.GetStorage(paramKey.Concat(param).ToArray(), module, storageMap);
+            return PolkadotApi.Serializer.Deserialize<T>(response.HexToByteArray());
         }
     }
 }
