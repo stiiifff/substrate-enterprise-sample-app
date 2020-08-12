@@ -55,4 +55,4 @@ Note: if the node does not sync with your local peers, you might need to export 
 
 ## How to compile the app
 
-The **Substrate Enterprise Sample app** is built using the [Xamarin.Forms](https://github.com/xamarin/Xamarin.Forms) technology, and can be compiled using [Microsoft Visual Studio 2019Community](https://visualstudio.microsoft.com/vs/community/).
+The **Substrate Enterprise Sample app** is built using the [Xamarin.Forms](https://github.com/xamarin/Xamarin.Forms) technology, and can be compiled using [Microsoft Visual Studio 2019 Community](https://visualstudio.microsoft.com/vs/community/).
