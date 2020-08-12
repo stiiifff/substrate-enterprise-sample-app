@@ -23,22 +23,17 @@ NOTE: This app implements the aforementionned process in a simplified way, thus 
 ### Shipment tracking
 
 <p>When using the sample's chain init script, Shipment S0001 has already been delivered.</p>
-<img src="docs/screenshot_1.png" width=200 />
-<img src="docs/screenshot_2.png" width=200 />
-<img src="docs/screenshot_3.png" width=200 />
+<img src="docs/screenshot_1.png" width=200 /> <img src="docs/screenshot_2.png" width=200 /> <img src="docs/screenshot_3.png" width=200 />
 
 <p>Create a new Shipment S0002 in the web frontend, then perform the Pickup operation in the app.
 <br/>Once marked as picked up, the Scan & Deliver shipping operations are available.</p>
-<img src="docs/screenshot_4.png" width=200 />
-<img src="docs/screenshot_5.png" width=200 />
-<img src="docs/screenshot_6.png" width=200 />
+<img src="docs/screenshot_4.png" width=200 /> <img src="docs/screenshot_5.png" width=200 /> <img src="docs/screenshot_6.png" width=200 />
 
 ### Node information
 
 <p>The Settings page displays basic information about the Node and current Peers.<br/>
 The button at the bottom of the page allows to view the node's logs.</p>
-<img src="docs/screenshot_7.png" width=200 />
-<img src="docs/screenshot_8.png" width=200 />
+<img src="docs/screenshot_7.png" width=200 /> <img src="docs/screenshot_8.png" width=200 />
 
 ## How to test the app
 
