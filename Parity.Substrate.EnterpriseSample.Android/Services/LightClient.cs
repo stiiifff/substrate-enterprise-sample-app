@@ -10,6 +10,7 @@ using System.IO;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Process = Java.Lang.Process;
 
 namespace Parity.Substrate.EnterpriseSample.Services
@@ -83,9 +84,11 @@ namespace Parity.Substrate.EnterpriseSample.Services
 
                 basePath = Path.Combine(appPath, "node");
                 binPath = Path.Combine(nodeBinDir, "io.parity.substrate.node-template");
+                var platformBinary = DeviceInfo.DeviceType == DeviceType.Virtual
+                    ? "node-template-x86_64" : "node-template-armv8";
                 if (!System.IO.File.Exists(binPath))
                 {
-                    using (var input = Assets.Open("node-template"))
+                    using (var input = Assets.Open(platformBinary))
                     using (var file = System.IO.File.OpenWrite(binPath))
                     {
                         await input.CopyToAsync(file);
@@ -118,9 +121,9 @@ namespace Parity.Substrate.EnterpriseSample.Services
             Trace.WriteLine("Node starting ...");
 
             // Light client
-            nodeProcess = StartProcess($"{nodeBinPath} -d {nodeBasePath} --chain={nodeChainSpecPath} --light --no-prometheus --no-telemetry");
+            //nodeProcess = StartProcess($"{nodeBinPath} -d {nodeBasePath} --chain={nodeChainSpecPath} --light --no-prometheus --no-telemetry");
             // Full node - Should give the possibility to run either light or full node in the UI
-            //nodeProcess = StartProcess($"{nodeBinPath} -d {nodeBasePath} --chain={nodeChainSpecPath} --no-prometheus --no-telemetry");
+            nodeProcess = StartProcess($"{nodeBinPath} -d {nodeBasePath} --chain={nodeChainSpecPath} --no-prometheus --no-telemetry");
 
             _ = Task.Factory.StartNew(async () =>
             {
