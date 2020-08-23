@@ -46,6 +46,7 @@ namespace Parity.Substrate.EnterpriseSample
             containerRegistry.RegisterForNavigation<ShipmentJourneyPage, ShipmentJourneyViewModel>();
             containerRegistry.RegisterForNavigation<SettingsPage, SettingsViewModel>();
             containerRegistry.RegisterForNavigation<NodeLogsPage, NodeLogsViewModel>();
+            containerRegistry.RegisterForNavigation<SignExternalPage, SignExternalPageViewModel>();
         }
 
         protected override async void OnInitialized()

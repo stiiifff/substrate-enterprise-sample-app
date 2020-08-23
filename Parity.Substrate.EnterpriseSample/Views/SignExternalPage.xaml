@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             xmlns:zxing="clr-namespace:ZXing.Net.Mobile.Forms;assembly=ZXing.Net.Mobile.Forms"
+              xmlns:zxcm="clr-namespace:ZXing.Common;assembly=zxing.portable"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="Parity.Substrate.EnterpriseSample.Views.SignExternalPage">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <BoxView Grid.Row="0" BackgroundColor="Chocolate"/>
+        <!--<zxing:ZXingScannerView Grid.Row="1" IsScanning="true"
+                                WidthRequest="200" HeightRequest="200"
+                                ScanResultCommand="{Binding ScanCommand}" />-->
+        <zxing:ZXingBarcodeImageView Grid.Row="1" WidthRequest="300" HeightRequest="300"
+                                     
+                                     BarcodeValue="{Binding UnsignedTx}" BarcodeFormat="QR_CODE">
+            <zxing:ZXingBarcodeImageView.BarcodeOptions>
+                <zxcm:EncodingOptions Width="300" Height="300" />
+            </zxing:ZXingBarcodeImageView.BarcodeOptions>
+        </zxing:ZXingBarcodeImageView>
+        <BoxView Grid.Row="2" BackgroundColor="Blue" />
+    </Grid>
+</ContentPage>

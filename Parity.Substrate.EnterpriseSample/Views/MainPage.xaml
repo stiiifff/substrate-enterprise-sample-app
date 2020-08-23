@@ -9,7 +9,7 @@
             Title="{Binding Title}">
 
     <TabbedPage.ToolbarItems>
-        <ToolbarItem Text="{Binding BestBlock}" />
+        <ToolbarItem Text="{Binding BestBlock}" Command="{Binding BestBlockCommand}" />
     </TabbedPage.ToolbarItems>
 
     <TabbedPage.Children>
