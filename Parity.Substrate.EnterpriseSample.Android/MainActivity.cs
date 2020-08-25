@@ -3,6 +3,7 @@ using Android.Content.PM;
 using Android.Content.Res;
 using Android.OS;
 using Android.Runtime;
+using Android.Util;
 using Parity.Substrate.EnterpriseSample.Services;
 using Polkadot.Api;
 using Prism;
@@ -24,7 +25,7 @@ namespace Parity.Substrate.EnterpriseSample.Droid
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
-            LoadApplication(new App(new AndroidInitializer(Assets)));
+            LoadApplication(new App(new AndroidInitializer(Assets, ApplicationInfo)));
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
@@ -38,15 +39,18 @@ namespace Parity.Substrate.EnterpriseSample.Droid
     public class AndroidInitializer : IPlatformInitializer
     {
         private readonly AssetManager assets;
+        private readonly ApplicationInfo applicationInfo;
 
-        public AndroidInitializer(AssetManager assets)
+        public AndroidInitializer(AssetManager assets, ApplicationInfo applicationInfo)
         {
             this.assets = assets;
+            this.applicationInfo = applicationInfo;
         }
 
         public void RegisterTypes(IContainerRegistry container)
         {
             container.RegisterInstance(assets);
+            container.RegisterInstance(applicationInfo);
             container.RegisterInstance(PolkaApi.GetApplication());
             container.RegisterSingleton<IToastService, ToastService>();
             container.RegisterSingleton<ILightClient, LightClient>();
