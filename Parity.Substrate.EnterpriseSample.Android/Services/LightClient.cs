@@ -1,4 +1,5 @@
-﻿using Android.Content.Res;
+﻿using Android.Content.PM;
+using Android.Content.Res;
 using Android.Util;
 using Java.IO;
 using Java.Lang;
@@ -10,7 +11,6 @@ using System.IO;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
-using Xamarin.Essentials;
 using Process = Java.Lang.Process;
 
 namespace Parity.Substrate.EnterpriseSample.Services
@@ -22,15 +22,18 @@ namespace Parity.Substrate.EnterpriseSample.Services
         readonly ReplaySubject<string> logs = new ReplaySubject<string>(50);
 
         public LightClient(AssetManager assets,
+            ApplicationInfo applicationInfo,
             ToastService toast,
             IEventAggregator eventAggregator)
         {
             Assets = assets;
+            ApplicationInfo = applicationInfo;
             Toast = toast;
             EventAggregator = eventAggregator;
         }
 
         public AssetManager Assets { get; }
+        public ApplicationInfo ApplicationInfo { get; }
         public ToastService Toast { get; set; }
         public IEventAggregator EventAggregator { get; }
         public bool IsInitialized { get; private set; }
@@ -83,25 +86,15 @@ namespace Parity.Substrate.EnterpriseSample.Services
                 }
 
                 basePath = Path.Combine(appPath, "node");
-                binPath = Path.Combine(nodeBinDir, "io.parity.substrate.node-template");
-                var platformBinary = DeviceInfo.DeviceType == DeviceType.Virtual
-                    ? "node-template-x86_64" : "node-template-armv8";
-                if (!System.IO.File.Exists(binPath))
-                {
-                    using (var input = Assets.Open(platformBinary))
-                    using (var file = System.IO.File.OpenWrite(binPath))
-                    {
-                        await input.CopyToAsync(file);
-                    }
+                binPath = Path.Combine(ApplicationInfo.NativeLibraryDir, "node-template");
 
-                    var chmod = await RunCommandAsync($"/system/bin/chmod 744 {binPath}");
-                    if (!string.IsNullOrEmpty(chmod))
-                        Log.Debug(GetType().Name, chmod);
+                var chmod = await RunCommandAsync($"/system/bin/chmod 744 {binPath}");
+                if (!string.IsNullOrEmpty(chmod))
+                    Log.Debug(GetType().Name, chmod);
 
-                    var res = await RunCommandAsync($"{binPath} purge-chain -y -d {basePath} --chain={chainSpecPath}");
-                    if (!string.IsNullOrEmpty(res))
-                        Log.Debug(GetType().Name, res);
-                }
+                //var res = await RunCommandAsync($"{binPath} purge-chain -y -d {basePath} --chain={chainSpecPath}");
+                //if (!string.IsNullOrEmpty(res))
+                //    Log.Debug(GetType().Name, res);
             }
             catch (System.Exception ex)
             {
@@ -130,15 +123,15 @@ namespace Parity.Substrate.EnterpriseSample.Services
                 using var input = new InputStreamReader(nodeProcess.ErrorStream);
                 using var reader = new BufferedReader(input);
 
-                bool first = true;
+                bool ready = false;
                 string line;
                 while (!string.IsNullOrEmpty((line = reader.ReadLine())))
                 {
-                    if (first)
+                    if (!ready && line.Contains("idle", StringComparison.InvariantCultureIgnoreCase))
                     {
                         Toast.ShowShortToast("Node is ready.");
                         EventAggregator.GetEvent<NodeStatusEvent>().Publish(NodeStatus.NodeReady);
-                        first = false;
+                        ready = true;
                     }
                     logs.OnNext(line);
                 }

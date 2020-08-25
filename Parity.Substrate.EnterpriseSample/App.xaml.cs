@@ -127,7 +127,7 @@ namespace Parity.Substrate.EnterpriseSample
                         await StartNodeAsync();
                         break;
                     case NodeStatus.NodeReady:
-                        await Task.Delay(2000);
+                        await Task.Delay(1000);
                         ConnectToNode();
                         break;
                     case NodeStatus.NodeError:
