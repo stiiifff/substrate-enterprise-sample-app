@@ -6,8 +6,10 @@ using Polkadot.DataStructs;
 using Polkadot.DataStructs.Metadata;
 using Polkadot.Utils;
 using Prism.Navigation;
+using QRCoder;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Numerics;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -27,6 +29,13 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
         {
             get { return unsignedTx; }
             set { SetProperty(ref unsignedTx, value); }
+        }
+
+        private ImageSource qrCodeImage;
+        public ImageSource QrCodeImage
+        {
+            get { return qrCodeImage; }
+            set { SetProperty(ref qrCodeImage, value); }
         }
 
         //public override void Initialize(INavigationParameters parameters)
@@ -85,7 +94,29 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
                         var extrinsic = new UncheckedExtrinsic<ExtrinsicAddress, ExtrinsicMultiSignature, SignedExtra, ExtrinsicCallRaw<byte[]>>(true, address, null, extra, call);
                         var payload = signer.GetSignaturePayload(extrinsic);
 
-                        Device.BeginInvokeOnMainThread(() => UnsignedTx = payload.ToHexString());
+                        var genesis = Polkadot.Utils.Converters.HexToByteArray("0x3c5cc354ca9cebd586b23f4aed2585b3e5841310cd882548ab18a288fd523a7c");
+
+                        var buf = new byte[8 + pub.Bytes.Length + payload.Length + genesis.Length];
+                        buf[0] = 0x00;
+                        buf[1] = 0x00;
+                        buf[2] = 0x01;
+                        buf[3] = 0x00;
+                        buf[4] = 0x00;
+                        buf[5] = 0x53;
+                        buf[6] = 0x01;
+                        buf[7] = 0x00;
+                        pub.Bytes.CopyTo(buf.AsMemory(8));
+                        payload.CopyTo(buf.AsMemory(8 + pub.Bytes.Length));
+                        genesis.CopyTo(buf.AsMemory(8 + pub.Bytes.Length + payload.Length));
+
+                        //Device.BeginInvokeOnMainThread(() => UnsignedTx = buf);
+
+                        QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                        QRCodeData qrCodeData = qrGenerator.CreateQrCode(buf, QRCodeGenerator.ECCLevel.L);
+                        PngByteQRCode qRCode = new PngByteQRCode(qrCodeData);
+                        byte[] qrCodeBytes = qRCode.GetGraphic(20);
+                        var imageSource = ImageSource.FromStream(() => new MemoryStream(qrCodeBytes));
+                        Device.BeginInvokeOnMainThread(() => QrCodeImage = imageSource);
 
                         //signer.SignUncheckedExtrinsic(extrinsic, AddressUtils.GetPublicKeyFromAddr(sender).Bytes, secret.HexToByteArray());
                     }

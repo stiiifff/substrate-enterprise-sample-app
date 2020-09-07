@@ -14,16 +14,18 @@
         </Grid.RowDefinitions>
 
         <BoxView Grid.Row="0" BackgroundColor="Chocolate"/>
+        <Image Grid.Row="1" WidthRequest="300" HeightRequest="300"
+               Source="{Binding QrCodeImage}" />
         <!--<zxing:ZXingScannerView Grid.Row="1" IsScanning="true"
                                 WidthRequest="200" HeightRequest="200"
                                 ScanResultCommand="{Binding ScanCommand}" />-->
-        <zxing:ZXingBarcodeImageView Grid.Row="1" WidthRequest="300" HeightRequest="300"
+        <!--<zxing:ZXingBarcodeImageView Grid.Row="1" WidthRequest="300" HeightRequest="300"
                                      
                                      BarcodeValue="{Binding UnsignedTx}" BarcodeFormat="QR_CODE">
             <zxing:ZXingBarcodeImageView.BarcodeOptions>
                 <zxcm:EncodingOptions Width="300" Height="300" />
             </zxing:ZXingBarcodeImageView.BarcodeOptions>
-        </zxing:ZXingBarcodeImageView>
+        </zxing:ZXingBarcodeImageView>-->
         <BoxView Grid.Row="2" BackgroundColor="Blue" />
     </Grid>
 </ContentPage>
