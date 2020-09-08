@@ -17,9 +17,10 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
     public class SignExternalPageViewModel : BaseViewModel
     {
         public SignExternalPageViewModel(INavigationService navigationService,
-            ILightClient lightClient, IApplication polkadotApi)
+            ILightClient lightClient, IApplication polkadotApi, IAccountService accountService)
             : base(navigationService, lightClient, polkadotApi)
         {
+            AccountService = accountService;
         }
 
         private string unsignedTx;
@@ -28,6 +29,8 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             get { return unsignedTx; }
             set { SetProperty(ref unsignedTx, value); }
         }
+
+        public IAccountService AccountService { get; }
 
         //public override void Initialize(INavigationParameters parameters)
         //{
@@ -46,24 +49,29 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             IsBusy = true;
             try
             {
-                await Task.Run(() =>
+                await Task.Run(async () =>
                 {
                     try
                     {
+                        var (addr, mnemonic, secret) = await AccountService.GenerateSr25519KeyPairAsync("ANDROID", "Substrate");
+
+                        //Device.BeginInvokeOnMainThread(() => UnsignedTx = $"substrate:{addr.Symbols}");
+
                         var ser = PolkadotApi.Serializer;
                         var signer = PolkadotApi.Signer;
 
                         var module = "ProductTracking";
                         var method = "track_shipment";
-                        var sender = new Address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY");
-                        var secret = "0x33A6F3093F158A7109F679410BEF1A0C54168145E0CECB4DF006C1C2FFFB1F09925A225D97AA00682D6A59B95B18780C10D7032336E88F3442B42361F4A66011";
+                        var sender = addr;
+                        //var sender = new Address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY");
+                        //var secret = "0x33A6F3093F158A7109F679410BEF1A0C54168145E0CECB4DF006C1C2FFFB1F09925A225D97AA00682D6A59B95B18780C10D7032336E88F3442B42361F4A66011";
 
                         var pub = AddressUtils.GetPublicKeyFromAddr(sender);
                         var address = new ExtrinsicAddress(pub);
 
                         var encodedExtrinsic = ser.Serialize(
                             new TrackShipmentCall(
-                                new Identifier("S0001"),
+                                new Identifier("S0002"),
                                 (int)ShippingOperation.Scan,
                                 DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                                 new ReadPoint(),
@@ -87,7 +95,7 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
 
                         Device.BeginInvokeOnMainThread(() => UnsignedTx = payload.ToHexString());
 
-                        //signer.SignUncheckedExtrinsic(extrinsic, AddressUtils.GetPublicKeyFromAddr(sender).Bytes, secret.HexToByteArray());
+                        signer.SignUncheckedExtrinsic(extrinsic, AddressUtils.GetPublicKeyFromAddr(sender).Bytes, secret.HexToByteArray());
                     }
                     catch (Exception ex)
                     {

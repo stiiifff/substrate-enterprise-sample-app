@@ -3,6 +3,6 @@
 	<uses-sdk android:minSdkVersion="27" android:targetSdkVersion="29" />
 	<application android:label="Substrate Enterprise Sample" android:icon="@mipmap/launcher_foreground"></application>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-  <uses-permission android:name="android.permission.CAMERA" />
-  <uses-permission android:name="android.permission.FLASHLIGHT" />
+	<uses-permission android:name="android.permission.CAMERA" />
+	<uses-permission android:name="android.permission.FLASHLIGHT" />
 </manifest>
