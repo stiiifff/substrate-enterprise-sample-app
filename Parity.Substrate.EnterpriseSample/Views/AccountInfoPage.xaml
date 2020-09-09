@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:prism="http://prismlibrary.com"
+             xmlns:zxing="clr-namespace:ZXing.Net.Mobile.Forms;assembly=ZXing.Net.Mobile.Forms"
+              xmlns:zxcm="clr-namespace:ZXing.Common;assembly=zxing.portable"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="Parity.Substrate.EnterpriseSample.Views.AccountInfoPage"
+             Title="{Binding Title}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Close" Command="{prism:GoBack}" />
+    </ContentPage.ToolbarItems>
+
+    <StackLayout Spacing="0" VerticalOptions="FillAndExpand">
+        <Label Text="Account info" Style="{StaticResource headerStyle}" />
+        <StackLayout Padding="20" VerticalOptions="FillAndExpand">
+            <Label Text="{Binding AccountName}" FontSize="Subtitle" FontAttributes="Bold" />
+            <Label Text="{Binding Address}" FontAttributes="Bold" FontSize="12" VerticalTextAlignment="Center" />
+            <Label FontSize="18" IsVisible="{Binding IsReady}" HeightRequest="64">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <FormattedString.Spans>
+                            <Span Text="Balance" FontAttributes="Bold" FontSize="18" />
+                            <Span Text=": " />
+                            <Span Text="{Binding Balance, StringFormat='{0:N3}'}"  />
+                        </FormattedString.Spans>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+            <zxing:ZXingBarcodeImageView BarcodeValue="{Binding QrCode}" BarcodeFormat="QR_CODE"
+                                         WidthRequest="300" HeightRequest="300">
+                <zxing:ZXingBarcodeImageView.BarcodeOptions>
+                    <zxcm:EncodingOptions Width="300" Height="300" />
+                </zxing:ZXingBarcodeImageView.BarcodeOptions>
+            </zxing:ZXingBarcodeImageView>
+        </StackLayout>
+    </StackLayout>
+</ContentPage>

@@ -53,49 +53,49 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
                 {
                     try
                     {
-                        var (addr, mnemonic, secret) = await AccountService.GenerateSr25519KeyPairAsync("ANDROID", "Substrate");
+                        var (addr, mnemonic) = await AccountService.GenerateSr25519KeyPairAsync("ANDROID", "Substrate");
 
                         //Device.BeginInvokeOnMainThread(() => UnsignedTx = $"substrate:{addr.Symbols}");
 
-                        var ser = PolkadotApi.Serializer;
-                        var signer = PolkadotApi.Signer;
+                        //var ser = PolkadotApi.Serializer;
+                        //var signer = PolkadotApi.Signer;
 
-                        var module = "ProductTracking";
-                        var method = "track_shipment";
-                        var sender = addr;
-                        //var sender = new Address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY");
-                        //var secret = "0x33A6F3093F158A7109F679410BEF1A0C54168145E0CECB4DF006C1C2FFFB1F09925A225D97AA00682D6A59B95B18780C10D7032336E88F3442B42361F4A66011";
+                        //var module = "ProductTracking";
+                        //var method = "track_shipment";
+                        //var sender = addr;
+                        ////var sender = new Address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY");
+                        ////var secret = "0x33A6F3093F158A7109F679410BEF1A0C54168145E0CECB4DF006C1C2FFFB1F09925A225D97AA00682D6A59B95B18780C10D7032336E88F3442B42361F4A66011";
 
-                        var pub = AddressUtils.GetPublicKeyFromAddr(sender);
-                        var address = new ExtrinsicAddress(pub);
+                        //var pub = AddressUtils.GetPublicKeyFromAddr(sender);
+                        //var address = new ExtrinsicAddress(pub);
 
-                        var encodedExtrinsic = ser.Serialize(
-                            new TrackShipmentCall(
-                                new Identifier("S0002"),
-                                (int)ShippingOperation.Scan,
-                                DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                                new ReadPoint(),
-                                new ReadingList()
-                            )
-                        );
+                        //var encodedExtrinsic = ser.Serialize(
+                        //    new TrackShipmentCall(
+                        //        new Identifier("S0002"),
+                        //        (int)ShippingOperation.Scan,
+                        //        DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                        //        new ReadPoint(),
+                        //        new ReadingList()
+                        //    )
+                        //);
 
-                        // Get account Nonce
-                        var nonce = PolkadotApi.GetAccountNonce(sender);
-                        Trace.WriteLine($"sender nonce: {nonce}");
-                        var extra = new SignedExtra(new EraDto(new ImmortalEra()), nonce, BigInteger.Zero);
+                        //// Get account Nonce
+                        //var nonce = PolkadotApi.GetAccountNonce(sender);
+                        //Trace.WriteLine($"sender nonce: {nonce}");
+                        //var extra = new SignedExtra(new EraDto(new ImmortalEra()), nonce, BigInteger.Zero);
 
-                        var metadata = new Metadata(PolkadotApi.GetMetadata(null));
-                        var absoluteIndex = metadata.GetModuleIndex(module, false);
-                        var moduleIndex = (byte)metadata.GetModuleIndex(module, true);
-                        var methodIndex = (byte)metadata.GetCallMethodIndex(absoluteIndex, method);
+                        //var metadata = new Metadata(PolkadotApi.GetMetadata(null));
+                        //var absoluteIndex = metadata.GetModuleIndex(module, false);
+                        //var moduleIndex = (byte)metadata.GetModuleIndex(module, true);
+                        //var methodIndex = (byte)metadata.GetCallMethodIndex(absoluteIndex, method);
 
-                        var call = new ExtrinsicCallRaw<byte[]>(moduleIndex, methodIndex, encodedExtrinsic);
-                        var extrinsic = new UncheckedExtrinsic<ExtrinsicAddress, ExtrinsicMultiSignature, SignedExtra, ExtrinsicCallRaw<byte[]>>(true, address, null, extra, call);
-                        var payload = signer.GetSignaturePayload(extrinsic);
+                        //var call = new ExtrinsicCallRaw<byte[]>(moduleIndex, methodIndex, encodedExtrinsic);
+                        //var extrinsic = new UncheckedExtrinsic<ExtrinsicAddress, ExtrinsicMultiSignature, SignedExtra, ExtrinsicCallRaw<byte[]>>(true, address, null, extra, call);
+                        //var payload = signer.GetSignaturePayload(extrinsic);
 
-                        Device.BeginInvokeOnMainThread(() => UnsignedTx = payload.ToHexString());
+                        //Device.BeginInvokeOnMainThread(() => UnsignedTx = payload.ToHexString());
 
-                        signer.SignUncheckedExtrinsic(extrinsic, AddressUtils.GetPublicKeyFromAddr(sender).Bytes, secret.HexToByteArray());
+                        //signer.SignUncheckedExtrinsic(extrinsic, AddressUtils.GetPublicKeyFromAddr(sender).Bytes, secret.HexToByteArray());
                     }
                     catch (Exception ex)
                     {

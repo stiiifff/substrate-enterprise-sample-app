@@ -5,10 +5,12 @@ using Parity.Substrate.EnterpriseSample.Models;
 using Parity.Substrate.EnterpriseSample.Services;
 using Parity.Substrate.EnterpriseSample.ViewModels;
 using Parity.Substrate.EnterpriseSample.Views;
+using Plugin.Iconize;
 using Polkadot.Api;
 using Prism;
 using Prism.Events;
 using Prism.Ioc;
+using Xamarin.Essentials;
 using Xamarin.Essentials.Implementation;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
@@ -39,6 +41,10 @@ namespace Parity.Substrate.EnterpriseSample
             containerRegistry.RegisterSingleton<INodeService, NodeService>();
 
             containerRegistry.RegisterForNavigation<NavigationPage>();
+            containerRegistry.RegisterForNavigation<IconNavigationPage>();
+            containerRegistry.RegisterForNavigation<AccountCreationPage, AccountCreationViewModel>();
+            containerRegistry.RegisterForNavigation<AccountInfoPage, AccountInfoViewModel>();
+            containerRegistry.RegisterForNavigation<AccountMnemonicPage, AccountMnemonicViewModel>();
             containerRegistry.RegisterForNavigation<MainPage, MainViewModel>();
             containerRegistry.RegisterForNavigation<TrackingPage, TrackingViewModel>();
             containerRegistry.RegisterForNavigation<ManagePage, ManageViewModel>();
@@ -54,7 +60,12 @@ namespace Parity.Substrate.EnterpriseSample
             InitializeComponent();
             SubscribeToNodeEvents();
             _ = Task.Run(() => LightClient.InitAsync());
-            await NavigationService.NavigateAsync("/NavigationPage/MainPage");
+
+            await NavigationService.NavigateAsync(
+                Preferences.Get("IsFirstRun", true)
+                ? "/IconNavigationPage/AccountCreationPage"
+                : "/IconNavigationPage/MainPage"
+             );
         }
 
         protected override async void OnResume()

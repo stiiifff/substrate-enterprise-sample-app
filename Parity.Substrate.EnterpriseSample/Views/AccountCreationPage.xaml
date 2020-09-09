@@ -1,5 +1,25 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Parity.Substrate.EnterpriseSample.Views.AccountCreationPage">
-    <ContentPage.Content>
-    </ContentPage.Content>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="Parity.Substrate.EnterpriseSample.Views.AccountCreationPage"
+             Title="{Binding Title}">
+    <StackLayout Spacing="0" VerticalOptions="FillAndExpand">
+        <Label Text="Account creation" Style="{StaticResource headerStyle}" />
+        <StackLayout Padding="20" VerticalOptions="FillAndExpand">
+            <Label Text="Looks like it's the first time, you're running the app !" FontSize="Subtitle" />
+            <Label Text="We're going to create a new account for you." />
+            <Label Text="Please enter a name for your account, and a password to protect it." />
+            <Label Text="This password will be required to recover access to your account." />
+            <Entry Placeholder="Account name" Text="{Binding AccountName}" Keyboard="Text" />
+            <Entry Placeholder="Password" Text="{Binding AccountPassword}" Keyboard="Text" IsPassword="True" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource Accent}" IsVisible="{Binding IsBusy}"
+                           VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+            <Button Text="Create account" Command="{Binding CreateAccountCommand}" VerticalOptions="EndAndExpand"                    
+                    TextColor="White" BackgroundColor="{StaticResource Primary}" />
+        </StackLayout>
+    </StackLayout>
 </ContentPage>

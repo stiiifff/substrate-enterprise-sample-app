@@ -11,20 +11,29 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
 {
     public class SettingsViewModel : TabViewModel
     {
-        public SettingsViewModel(INavigationService navigationService, IDeviceService device, ILightClient lightClient, IApplication polkadotApi)
+        private IDisposable bestBlockSub;
+
+        public SettingsViewModel(INavigationService navigationService,
+            IDeviceService device, ILightClient lightClient,
+            IApplication polkadotApi, INodeService node)
             : base(navigationService, lightClient, polkadotApi)
         {
             Title = "Settings";
             ApplicationVersion = $"{Xamarin.Essentials.AppInfo.Name} v{Xamarin.Essentials.AppInfo.Version}";
             Device = device;
-
             IsActiveChanged += OnIsActiveChanged;
+
+            bestBlockSub = node.BestBlock.Subscribe(block =>
+                Device.BeginInvokeOnMainThread(() =>
+                    BestBlock = $"{block}"));
         }
 
         private async void OnIsActiveChanged(object sender, EventArgs e)
         {
             if (IsActive && App.IsPolkadotApiConnected)
                 await LoadDataAsync();
+            if (!IsActive)
+                bestBlockSub?.Dispose();
         }
 
         private string applicationVersion;
@@ -35,6 +44,13 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
         }
 
         public IDeviceService Device { get; }
+
+        private string bestBlock;
+        public string BestBlock
+        {
+            get { return bestBlock; }
+            set { SetProperty(ref bestBlock, value); }
+        }
 
         private PeersInfo peersInfo;
         public PeersInfo PeersInfo

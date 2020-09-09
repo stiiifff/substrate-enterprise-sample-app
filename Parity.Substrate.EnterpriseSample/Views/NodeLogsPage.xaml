@@ -8,6 +8,10 @@
              mc:Ignorable="d"
              x:Class="Parity.Substrate.EnterpriseSample.Views.NodeLogsPage"
              Title="{Binding Title}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Close" Command="{prism:GoBack}" />
+    </ContentPage.ToolbarItems>
     
     <ContentPage.Resources>
         <ResourceDictionary>

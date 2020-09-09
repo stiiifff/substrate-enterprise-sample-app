@@ -23,6 +23,8 @@ namespace Parity.Substrate.EnterpriseSample.Droid
             ZXing.Net.Mobile.Forms.Android.Platform.Init();
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+            Plugin.Iconize.Iconize.With(new Plugin.Iconize.Fonts.MaterialModule());
+            Plugin.Iconize.Iconize.Init(Resource.Id.toolbar, Resource.Id.sliding_tabs);
 
             LoadApplication(new App(new AndroidInitializer(Assets, ApplicationInfo)));
         }

@@ -3,7 +3,9 @@ using Java.IO;
 using Java.Lang;
 using System;
 using System.IO;
+using System.Linq;
 using System.Reactive.Linq;
+using System.Security;
 using System.Threading.Tasks;
 
 namespace Parity.Substrate.EnterpriseSample.Services
@@ -17,7 +19,7 @@ namespace Parity.Substrate.EnterpriseSample.Services
 
         public ApplicationInfo ApplicationInfo { get; }
 
-        public async Task<(Polkadot.DataStructs.Address, string, string)> GenerateSr25519KeyPairAsync(string name, string password)
+        public async Task<(Polkadot.DataStructs.Address, string)> GenerateSr25519KeyPairAsync(string name, string password)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -30,7 +32,7 @@ namespace Parity.Substrate.EnterpriseSample.Services
             }
 
             var subkey = Path.Combine(ApplicationInfo.NativeLibraryDir, "subkey");
-            var output = await RunCommandAsync($"{subkey} generate");
+            var output = await RunCommandAsync($"{subkey} generate --password {password}");
 
             var lines = output.Split(Environment.NewLine);
             if (string.IsNullOrEmpty(output))
@@ -43,10 +45,29 @@ namespace Parity.Substrate.EnterpriseSample.Services
             var account = lines[3].Substring(lines[3].IndexOf(':') + 1).Trim();
             var address = lines[4].Substring(lines[4].IndexOf(':') + 1).Trim();
 
+            await Xamarin.Essentials.SecureStorage.SetAsync(BuildAccountSecretKey(name), secret);
 
-
-            return (new Polkadot.DataStructs.Address(address), mnemonic, secret);
+            return (new Polkadot.DataStructs.Address(address), mnemonic);
         }
+
+        public async Task<SecureString> RetrieveAccountSecretAsync(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
+            }
+
+            var secret = await Xamarin.Essentials.SecureStorage.GetAsync(BuildAccountSecretKey(name));
+            if (secret == null)
+                return null;
+
+            var result = new SecureString();
+            Array.ForEach(secret.ToArray(), result.AppendChar);
+            result.MakeReadOnly();
+            return result;
+        }
+
+        private string BuildAccountSecretKey(string name) => $"{name}_secret";
 
         private async Task<string> RunCommandAsync(string command)
         {

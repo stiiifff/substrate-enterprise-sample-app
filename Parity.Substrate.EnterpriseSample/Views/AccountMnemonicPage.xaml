@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="Parity.Substrate.EnterpriseSample.Views.AccountMnemonicPage"
+             Title="{Binding Title}">
+    <StackLayout Spacing="0" VerticalOptions="FillAndExpand">
+        <Label Text="Account mnemonic" Style="{StaticResource headerStyle}" />
+        <StackLayout Padding="20" VerticalOptions="FillAndExpand">
+            <Label Text="Congratulations, your account has been created !" FontSize="Subtitle" HeightRequest="32"/>
+            <Label Text="Your address is: " />
+            <Label Text="{Binding Address}" FontAttributes="Bold" FontSize="12" HeightRequest="64" VerticalTextAlignment="Center" />
+            <Label Text="PLEASE TAKE NOTE OF THE FOLLOWING 12 MNEMONIC WORDS." FontAttributes="Bold" FontSize="Subtitle" HorizontalTextAlignment="Center" />
+            <Label Text="They will allow you to recover your address (along with the password previously entered) in case your phone is lost or stolen." />
+            
+            <Label Text="{Binding Mnemonic}" FontAttributes="Bold" FontSize="30" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" />
+            <Label Text="Tap the 'READY' button when you are done." VerticalOptions="End" HorizontalOptions="Center"/>
+            <Button Text="Ready" Command="{Binding ReadyCommand}" VerticalOptions="End"                    
+                    TextColor="White" BackgroundColor="{StaticResource Primary}" />
+        </StackLayout>
+    </StackLayout>
+</ContentPage>

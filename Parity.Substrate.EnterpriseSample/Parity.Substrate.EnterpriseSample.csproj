@@ -25,6 +25,8 @@
     <PackageReference Include="System.Memory" Version="4.5.4" />
     <PackageReference Include="ZXing.Net.Mobile.Forms" Version="2.4.1" />
     <PackageReference Include="dotnetstandard-bip39" Version="1.0.2" />
+    <PackageReference Include="Xam.Plugin.Iconize" Version="3.5.0.129" />
+    <PackageReference Include="Xam.Plugin.Iconize.Material" Version="3.5.0.129" />
   </ItemGroup>
 
   <ItemGroup>
@@ -59,8 +61,5 @@
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Converters\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Views\AccountCreationPage.xaml.cs" />
   </ItemGroup>
 </Project>
