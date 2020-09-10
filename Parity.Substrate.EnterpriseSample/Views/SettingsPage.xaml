@@ -80,6 +80,11 @@
                             BackgroundColor="{StaticResource Primary}"
                             TextColor="White"
                             VerticalOptions="EndAndExpand" />
+                <Button Margin="0,10,0,0" Text="Purge Node data"
+                            Command="{Binding PurgeNodeDataCommand}"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="White"
+                            VerticalOptions="EndAndExpand" />
                 <Label FontSize="10" Text="{Binding ApplicationVersion}" HorizontalOptions="Center"/>
             </StackLayout>
         </Grid>

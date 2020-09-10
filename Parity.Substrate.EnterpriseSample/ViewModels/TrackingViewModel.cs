@@ -105,11 +105,12 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
                     {
                         var address = Xamarin.Essentials.Preferences.Get("Address", null);
 
-                        var response = PolkadotApi.GetStorage(AddressUtils.GetPublicKeyFromAddr(address), "Registrar", "OrganizationsOf");
-                        var orgList = PolkadotApi.Serializer.Deserialize<OrganizationList>(response.HexToByteArray());
-                        var accountOrg = orgList.Organizations.FirstOrDefault();
+                        //var response = PolkadotApi.GetStorage(new Address(address), "Registrar", "OrganizationsOf");
+                        //var orgList = PolkadotApi.Serializer.Deserialize<OrganizationList>(response.HexToByteArray());
+                        //var accountOrg = orgList.Organizations.FirstOrDefault();
+                        //response = PolkadotApi.GetStorage(AddressUtils.GetAddrFromPublicKey(accountOrg), "ProductTracking", "ShipmentsOfOrganization");
 
-                        response = PolkadotApi.GetStorage(AddressUtils.GetAddrFromPublicKey(accountOrg), "ProductTracking", "ShipmentsOfOrganization");
+                        var response = PolkadotApi.GetStorage(new Address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"), "ProductTracking", "ShipmentsOfOrganization");
                         var shipments = PolkadotApi.Serializer.Deserialize<ShipmentIdList>(response.HexToByteArray());
                         var shipmentsObs = new ObservableCollection<ShipmentInfo>(shipments.ShipmentIds.Select(s => new ShipmentInfo { ShipmentId = s.ToString() }));
                         Device.BeginInvokeOnMainThread(() => Shipments = shipmentsObs);

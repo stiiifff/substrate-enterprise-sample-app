@@ -55,9 +55,20 @@ namespace Parity.Substrate.EnterpriseSample.Services
                 await Task.Run(StartNode);
         }
 
-        public async Task StopASync()
+        public async Task StopAsync()
         {
             await Task.Run(StopNode);
+        }
+
+        public async Task PurgeAsync()
+        {
+            if (IsRunning)
+            {
+                await StopAsync();
+            }
+
+            await PurgeChainAsync();
+            await StartAsync();
         }
 
         async Task<(string, string, string)> InstallNodeBinaryAsync()
@@ -161,6 +172,11 @@ namespace Parity.Substrate.EnterpriseSample.Services
                     nodeProcess = null;
                 }
             }
+        }
+
+        async Task PurgeChainAsync()
+        {
+            await RunCommandAsync($"{nodeBinPath} purge-chain -y -d {nodeBasePath} --chain={nodeChainSpecPath}");
         }
 
         private async Task<string> RunCommandAsync(string command)

@@ -99,7 +99,7 @@ namespace Parity.Substrate.EnterpriseSample
             {
                 if (IsPolkadotApiConnected)
                     PolkadotApi?.Disconnect();
-                await LightClient.StopASync();
+                await LightClient.StopAsync();
             }
             finally
             {
