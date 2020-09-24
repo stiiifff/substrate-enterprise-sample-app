@@ -35,24 +35,25 @@ namespace Parity.Substrate.EnterpriseSample
         public ILightClient LightClient => Container.Resolve<ILightClient>();
         public IToastService ToastService => Container.Resolve<IToastService>();
 
-        protected override void RegisterTypes(IContainerRegistry containerRegistry)
+        protected override void RegisterTypes(IContainerRegistry container)
         {
-            containerRegistry.RegisterSingleton<IAppInfo, AppInfoImplementation>();
-            containerRegistry.RegisterSingleton<INodeService, NodeService>();
+            container.RegisterSingleton<IAppInfo, AppInfoImplementation>();
+            container.RegisterSingleton<IAccountService, AccountService>();
+            container.RegisterSingleton<INodeService, NodeService>();
 
-            containerRegistry.RegisterForNavigation<NavigationPage>();
-            containerRegistry.RegisterForNavigation<IconNavigationPage>();
-            containerRegistry.RegisterForNavigation<AccountCreationPage, AccountCreationViewModel>();
-            containerRegistry.RegisterForNavigation<AccountInfoPage, AccountInfoViewModel>();
-            containerRegistry.RegisterForNavigation<AccountMnemonicPage, AccountMnemonicViewModel>();
-            containerRegistry.RegisterForNavigation<MainPage, MainViewModel>();
-            containerRegistry.RegisterForNavigation<TrackingPage, TrackingViewModel>();
-            containerRegistry.RegisterForNavigation<ManagePage, ManageViewModel>();
-            containerRegistry.RegisterForNavigation<ShipmentPage, ShipmentViewModel>();
-            containerRegistry.RegisterForNavigation<ShipmentJourneyPage, ShipmentJourneyViewModel>();
-            containerRegistry.RegisterForNavigation<SettingsPage, SettingsViewModel>();
-            containerRegistry.RegisterForNavigation<NodeLogsPage, NodeLogsViewModel>();
-            containerRegistry.RegisterForNavigation<SignExternalPage, SignExternalPageViewModel>();
+            container.RegisterForNavigation<NavigationPage>();
+            container.RegisterForNavigation<IconNavigationPage>();
+            container.RegisterForNavigation<AccountCreationPage, AccountCreationViewModel>();
+            container.RegisterForNavigation<AccountInfoPage, AccountInfoViewModel>();
+            container.RegisterForNavigation<AccountMnemonicPage, AccountMnemonicViewModel>();
+            container.RegisterForNavigation<MainPage, MainViewModel>();
+            container.RegisterForNavigation<TrackingPage, TrackingViewModel>();
+            container.RegisterForNavigation<ManagePage, ManageViewModel>();
+            container.RegisterForNavigation<ShipmentPage, ShipmentViewModel>();
+            container.RegisterForNavigation<ShipmentJourneyPage, ShipmentJourneyViewModel>();
+            container.RegisterForNavigation<SettingsPage, SettingsViewModel>();
+            container.RegisterForNavigation<NodeLogsPage, NodeLogsViewModel>();
+            container.RegisterForNavigation<SignExternalPage, SignExternalPageViewModel>();
         }
 
         protected override async void OnInitialized()

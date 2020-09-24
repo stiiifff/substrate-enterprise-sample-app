@@ -51,21 +51,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android" />
-    <Reference Include="Polkadot">
-      <HintPath>..\assembly\Polkadot.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors" />
-    <Reference Include="Polkadot.BinarySerializer">
-      <HintPath>..\assembly\Polkadot.BinarySerializer.dll</HintPath>
-    </Reference>
-    <Reference Include="Schnorrkel">
-      <HintPath>..\assembly\Schnorrkel.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Blake2Core">
@@ -133,7 +124,6 @@
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Services\LightClient.cs" />
     <Compile Include="Services\ToastService.cs" />
-    <Compile Include="Services\AccountService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -178,10 +168,10 @@
     <Folder Include="libs\arm64-v8a\" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidNativeLibrary Include="libs\arm64-v8a\node-template" />
-    <AndroidNativeLibrary Include="libs\x86_64\node-template" />
-    <AndroidNativeLibrary Include="libs\x86_64\subkey" />
-    <AndroidNativeLibrary Include="libs\arm64-v8a\subkey" />
+    <AndroidNativeLibrary Include="libs\arm64-v8a\enterprise-sample" />
+    <AndroidNativeLibrary Include="libs\x86_64\enterprise-sample" />
+    <AndroidNativeLibrary Include="libs\arm64-v8a\libsr25519crust.so" />
+    <AndroidNativeLibrary Include="libs\x86_64\libsr25519crust.so" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using System.Windows.Input;
 using Parity.Substrate.EnterpriseSample.Services;
 using Polkadot.Api;
@@ -43,8 +44,8 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             set { SetProperty(ref address, value); }
         }
 
-        private BigInteger balance;
-        public BigInteger Balance
+        private decimal balance;
+        public decimal Balance
         {
             get { return balance; }
             set { SetProperty(ref balance, value); }
@@ -64,8 +65,9 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             QrCode = $"substrate:{Address}:{AccountName}";
 
             balanceSid = PolkadotApi.SubscribeAccountInfo(Address, accountInfo =>
-                Device.BeginInvokeOnMainThread(() => Balance = accountInfo.AccountData.Free)
-            );
+                Device.BeginInvokeOnMainThread(() => Balance =
+                  (decimal)(accountInfo.AccountData.Free / new BigInteger(Math.Pow(10,15)))
+            ));
         }
 
         public override void OnNavigatedFrom(INavigationParameters parameters)

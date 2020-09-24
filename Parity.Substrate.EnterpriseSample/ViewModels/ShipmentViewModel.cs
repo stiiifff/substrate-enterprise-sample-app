@@ -170,9 +170,11 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
                     var account = Xamarin.Essentials.Preferences.Get("AccountName", null);
                     var address = Xamarin.Essentials.Preferences.Get("Address", null);
                     var sender = new Address(address);
-                    var secret = await AccountService.RetrieveAccountSecretAsync(account);
-                    //TODO: error management
+                    var pubkey = AddressUtils.GetPublicKeyFromAddr(sender).Bytes;
 
+                    var secret = (await AccountService.RetrieveAccountSecretAsync(account)).ToUnsecureString();
+
+                    //TODO: error management
                     var encodedExtrinsic = ser.Serialize(
                         new TrackShipmentCall(
                             new Identifier(ShipmentId),
@@ -185,7 +187,7 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
                     Trace.WriteLine(encodedExtrinsic.ToPrefixedHexString());
 
                     transactionSid = PolkadotApi.SubmitAndSubcribeExtrinsic(encodedExtrinsic,
-                        "ProductTracking", "track_shipment", sender, secret.ToUnsecureString(), response =>
+                        "ProductTracking", "track_shipment", sender, secret, response =>
                         {
                             Trace.WriteLine(response);
 

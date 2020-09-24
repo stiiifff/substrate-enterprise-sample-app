@@ -39,6 +39,9 @@
     <Reference Include="Schnorrkel">
       <HintPath>..\assembly\Schnorrkel.dll</HintPath>
     </Reference>
+    <Reference Include="sr25519-dotnet.lib">
+      <HintPath>..\assembly\sr25519-dotnet.lib.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

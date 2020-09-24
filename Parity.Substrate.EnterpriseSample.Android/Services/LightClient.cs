@@ -97,7 +97,7 @@ namespace Parity.Substrate.EnterpriseSample.Services
                 }
 
                 basePath = Path.Combine(appPath, "node");
-                binPath = Path.Combine(ApplicationInfo.NativeLibraryDir, "node-template");
+                binPath = Path.Combine(ApplicationInfo.NativeLibraryDir, "enterprise-sample");
 
                 var chmod = await RunCommandAsync($"/system/bin/chmod 744 {binPath}");
                 if (!string.IsNullOrEmpty(chmod))

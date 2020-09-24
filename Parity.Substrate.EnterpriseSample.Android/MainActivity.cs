@@ -53,7 +53,6 @@ namespace Parity.Substrate.EnterpriseSample.Droid
             container.RegisterInstance(assets);
             container.RegisterInstance(applicationInfo);
             container.RegisterInstance(PolkaApi.GetApplication());
-            container.RegisterSingleton<IAccountService, AccountService>();
             container.RegisterSingleton<IToastService, ToastService>();
             container.RegisterSingleton<ILightClient, LightClient>();
         }
