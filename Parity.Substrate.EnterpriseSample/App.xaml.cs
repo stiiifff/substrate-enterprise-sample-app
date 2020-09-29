@@ -37,6 +37,7 @@ namespace Parity.Substrate.EnterpriseSample
 
         protected override void RegisterTypes(IContainerRegistry container)
         {
+            container.RegisterInstance(PolkaApi.GetApplication());
             container.RegisterSingleton<IAppInfo, AppInfoImplementation>();
             container.RegisterSingleton<IAccountService, AccountService>();
             container.RegisterSingleton<INodeService, NodeService>();

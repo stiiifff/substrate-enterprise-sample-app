@@ -4,7 +4,6 @@ using Android.Content.Res;
 using Android.OS;
 using Android.Runtime;
 using Parity.Substrate.EnterpriseSample.Services;
-using Polkadot.Api;
 using Prism;
 using Prism.Ioc;
 
@@ -52,7 +51,7 @@ namespace Parity.Substrate.EnterpriseSample.Droid
         {
             container.RegisterInstance(assets);
             container.RegisterInstance(applicationInfo);
-            container.RegisterInstance(PolkaApi.GetApplication());
+            
             container.RegisterSingleton<IToastService, ToastService>();
             container.RegisterSingleton<ILightClient, LightClient>();
         }

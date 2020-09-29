@@ -102,10 +102,6 @@ namespace Parity.Substrate.EnterpriseSample.Services
                 var chmod = await RunCommandAsync($"/system/bin/chmod 744 {binPath}");
                 if (!string.IsNullOrEmpty(chmod))
                     Log.Debug(GetType().Name, chmod);
-
-                //var res = await RunCommandAsync($"{binPath} purge-chain -y -d {basePath} --chain={chainSpecPath}");
-                //if (!string.IsNullOrEmpty(res))
-                //    Log.Debug(GetType().Name, res);
             }
             catch (System.Exception ex)
             {

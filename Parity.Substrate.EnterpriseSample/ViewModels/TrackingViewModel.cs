@@ -94,6 +94,10 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             }
         }
 
+        OrganizationList GetOrganizationsOf(PublicKey account) => GetValueFromStorageMap<OrganizationList>("registrar", "OrganizationsOf", account);
+
+        ShipmentIdList GetShipmentsOfOrganization(PublicKey account) => GetValueFromStorageMap<ShipmentIdList>("ProductTracking", "ShipmentsOfOrganization", account);
+
         internal async Task LoadDataAsync()
         {
             IsBusy = true;
@@ -104,15 +108,11 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
                     try
                     {
                         var address = Xamarin.Essentials.Preferences.Get("Address", null);
-
-                        //var response = PolkadotApi.GetStorage(new Address(address), "Registrar", "OrganizationsOf");
-                        //var orgList = PolkadotApi.Serializer.Deserialize<OrganizationList>(response.HexToByteArray());
-                        //var accountOrg = orgList.Organizations.FirstOrDefault();
-                        //response = PolkadotApi.GetStorage(AddressUtils.GetAddrFromPublicKey(accountOrg), "ProductTracking", "ShipmentsOfOrganization");
-
-                        var response = PolkadotApi.GetStorage(new Address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"), "ProductTracking", "ShipmentsOfOrganization");
-                        var shipments = PolkadotApi.Serializer.Deserialize<ShipmentIdList>(response.HexToByteArray());
-                        var shipmentsObs = new ObservableCollection<ShipmentInfo>(shipments.ShipmentIds.Select(s => new ShipmentInfo { ShipmentId = s.ToString() }));
+                        var accountOrg = GetOrganizationsOf(AddressUtils.GetPublicKeyFromAddr(address)).Organizations.FirstOrDefault();
+                        var shipments = GetShipmentsOfOrganization(accountOrg);
+                        var shipmentsObs = new ObservableCollection<ShipmentInfo>(
+                            shipments.ShipmentIds.Select(s => new ShipmentInfo { ShipmentId = s.ToString() })
+                        );
                         Device.BeginInvokeOnMainThread(() => Shipments = shipmentsObs);
                     }
                     catch (Exception ex)

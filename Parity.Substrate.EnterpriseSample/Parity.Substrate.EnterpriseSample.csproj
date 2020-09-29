@@ -15,7 +15,7 @@
     <PackageReference Include="Prism.DryIoc.Forms" Version="7.2.0.1422" />
     <PackageReference Include="System.Reactive" Version="4.4.1" />
     <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.5.3.2" />
-    <PackageReference Include="Xamarin.Forms" Version="4.7.0.968" />
+    <PackageReference Include="Xamarin.Forms" Version="4.8.0.1451" />
     <PackageReference Include="Blake2Core" Version="1.0.0" />
     <PackageReference Include="OneOf" Version="2.1.155" />
     <PackageReference Include="SimpleBase" Version="3.0.1" />

@@ -170,11 +170,9 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
                     var account = Xamarin.Essentials.Preferences.Get("AccountName", null);
                     var address = Xamarin.Essentials.Preferences.Get("Address", null);
                     var sender = new Address(address);
-                    var pubkey = AddressUtils.GetPublicKeyFromAddr(sender).Bytes;
 
                     var secret = (await AccountService.RetrieveAccountSecretAsync(account)).ToUnsecureString();
 
-                    //TODO: error management
                     var encodedExtrinsic = ser.Serialize(
                         new TrackShipmentCall(
                             new Identifier(ShipmentId),
@@ -226,8 +224,11 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
                                         TransactionProgress = 1.0f;
 
                                         _ = Task.Delay(2000).ContinueWith(_ =>
-                                            Device.BeginInvokeOnMainThread(() =>
-                                                TransactionInProgress = false));
+                                            Device.BeginInvokeOnMainThread(async () =>
+                                            {
+                                                TransactionInProgress = false;
+                                                await LoadDataAsync();
+                                            }));
                                     }
                                 }
                             });
