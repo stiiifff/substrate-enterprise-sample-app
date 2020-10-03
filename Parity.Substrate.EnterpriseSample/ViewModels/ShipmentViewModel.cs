@@ -28,7 +28,7 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             Device = device;
             Toast = toast;
             AccountService = accountService;
-            TrackShipmentCommand = new Command(async (op) => await TrackShipmentAsync(Enum.Parse<ShippingOperation>((string)op)));
+            TrackShipmentCommand = new Command(async (op) => await TrackShipmentAsync((ShippingOperation)Enum.Parse(typeof(ShippingOperation),(string)op)));
         }
 
         public IDeviceService Device { get; }
