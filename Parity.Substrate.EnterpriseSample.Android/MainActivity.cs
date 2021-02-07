@@ -3,9 +3,7 @@ using Android.Content.PM;
 using Android.Content.Res;
 using Android.OS;
 using Android.Runtime;
-using Android.Util;
 using Parity.Substrate.EnterpriseSample.Services;
-using Polkadot.Api;
 using Prism;
 using Prism.Ioc;
 
@@ -21,8 +19,11 @@ namespace Parity.Substrate.EnterpriseSample.Droid
 
             base.OnCreate(savedInstanceState);
 
+            ZXing.Net.Mobile.Forms.Android.Platform.Init();
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+            Plugin.Iconize.Iconize.With(new Plugin.Iconize.Fonts.MaterialModule());
+            Plugin.Iconize.Iconize.Init(Resource.Id.toolbar, Resource.Id.sliding_tabs);
 
             LoadApplication(new App(new AndroidInitializer(Assets, ApplicationInfo)));
         }
@@ -30,7 +31,7 @@ namespace Parity.Substrate.EnterpriseSample.Droid
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-
+            ZXing.Net.Mobile.Android.PermissionsHandler.OnRequestPermissionsResult(requestCode, permissions, grantResults);
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
@@ -50,7 +51,7 @@ namespace Parity.Substrate.EnterpriseSample.Droid
         {
             container.RegisterInstance(assets);
             container.RegisterInstance(applicationInfo);
-            container.RegisterInstance(PolkaApi.GetApplication());
+            
             container.RegisterSingleton<IToastService, ToastService>();
             container.RegisterSingleton<ILightClient, LightClient>();
         }

@@ -5,10 +5,12 @@ using Parity.Substrate.EnterpriseSample.Models;
 using Parity.Substrate.EnterpriseSample.Services;
 using Parity.Substrate.EnterpriseSample.ViewModels;
 using Parity.Substrate.EnterpriseSample.Views;
+using Plugin.Iconize;
 using Polkadot.Api;
 using Prism;
 using Prism.Events;
 using Prism.Ioc;
+using Xamarin.Essentials;
 using Xamarin.Essentials.Implementation;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
@@ -33,19 +35,26 @@ namespace Parity.Substrate.EnterpriseSample
         public ILightClient LightClient => Container.Resolve<ILightClient>();
         public IToastService ToastService => Container.Resolve<IToastService>();
 
-        protected override void RegisterTypes(IContainerRegistry containerRegistry)
+        protected override void RegisterTypes(IContainerRegistry container)
         {
-            containerRegistry.RegisterSingleton<IAppInfo, AppInfoImplementation>();
-            containerRegistry.RegisterSingleton<INodeService, NodeService>();
+            container.RegisterInstance(PolkaApi.GetApplication());
+            container.RegisterSingleton<IAppInfo, AppInfoImplementation>();
+            container.RegisterSingleton<IAccountService, AccountService>();
+            container.RegisterSingleton<INodeService, NodeService>();
 
-            containerRegistry.RegisterForNavigation<NavigationPage>();
-            containerRegistry.RegisterForNavigation<MainPage, MainViewModel>();
-            containerRegistry.RegisterForNavigation<TrackingPage, TrackingViewModel>();
-            containerRegistry.RegisterForNavigation<ManagePage, ManageViewModel>();
-            containerRegistry.RegisterForNavigation<ShipmentPage, ShipmentViewModel>();
-            containerRegistry.RegisterForNavigation<ShipmentJourneyPage, ShipmentJourneyViewModel>();
-            containerRegistry.RegisterForNavigation<SettingsPage, SettingsViewModel>();
-            containerRegistry.RegisterForNavigation<NodeLogsPage, NodeLogsViewModel>();
+            container.RegisterForNavigation<NavigationPage>();
+            container.RegisterForNavigation<IconNavigationPage>();
+            container.RegisterForNavigation<AccountCreationPage, AccountCreationViewModel>();
+            container.RegisterForNavigation<AccountInfoPage, AccountInfoViewModel>();
+            container.RegisterForNavigation<AccountMnemonicPage, AccountMnemonicViewModel>();
+            container.RegisterForNavigation<MainPage, MainViewModel>();
+            container.RegisterForNavigation<TrackingPage, TrackingViewModel>();
+            container.RegisterForNavigation<ManagePage, ManageViewModel>();
+            container.RegisterForNavigation<ShipmentPage, ShipmentViewModel>();
+            container.RegisterForNavigation<ShipmentJourneyPage, ShipmentJourneyViewModel>();
+            container.RegisterForNavigation<SettingsPage, SettingsViewModel>();
+            container.RegisterForNavigation<NodeLogsPage, NodeLogsViewModel>();
+            container.RegisterForNavigation<SignExternalPage, SignExternalPageViewModel>();
         }
 
         protected override async void OnInitialized()
@@ -53,7 +62,12 @@ namespace Parity.Substrate.EnterpriseSample
             InitializeComponent();
             SubscribeToNodeEvents();
             _ = Task.Run(() => LightClient.InitAsync());
-            await NavigationService.NavigateAsync("/NavigationPage/MainPage");
+
+            await NavigationService.NavigateAsync(
+                Preferences.Get("IsFirstRun", true)
+                ? "/IconNavigationPage/AccountCreationPage"
+                : "/IconNavigationPage/MainPage"
+             );
         }
 
         protected override async void OnResume()
@@ -87,7 +101,7 @@ namespace Parity.Substrate.EnterpriseSample
             {
                 if (IsPolkadotApiConnected)
                     PolkadotApi?.Disconnect();
-                await LightClient.StopASync();
+                await LightClient.StopAsync();
             }
             finally
             {

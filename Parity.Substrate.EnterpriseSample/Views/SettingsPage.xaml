@@ -38,7 +38,18 @@
                                 <FormattedString.Spans>
                                     <Span Text="Version" FontAttributes="Bold" FontSize="18" />
                                     <Span Text=": " />
-                                    <Span Text="{Binding SystemInfo.Version}"  />
+                                    <Span Text="{Binding SystemInfo.Version, StringFormat='{0:N}'}"  />
+                                </FormattedString.Spans>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Label FontSize="18" IsVisible="{Binding IsReady}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <FormattedString.Spans>
+                                    <Span Text="Best block" FontAttributes="Bold" FontSize="18" />
+                                    <Span Text=": " />
+                                    <Span Text="{Binding BestBlock}"  />
                                 </FormattedString.Spans>
                             </FormattedString>
                         </Label.FormattedText>
@@ -66,6 +77,11 @@
             <StackLayout Grid.Row="1" Orientation="Vertical" Padding="16,0,16,16">
                 <Button Margin="0,10,0,0" Text="Show Node logs"
                             Command="{prism:NavigateTo 'NavigationPage/NodeLogsPage', UseModalNavigation=True}"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="White"
+                            VerticalOptions="EndAndExpand" />
+                <Button Margin="0,10,0,0" Text="Purge Node data"
+                            Command="{Binding PurgeNodeDataCommand}"
                             BackgroundColor="{StaticResource Primary}"
                             TextColor="White"
                             VerticalOptions="EndAndExpand" />

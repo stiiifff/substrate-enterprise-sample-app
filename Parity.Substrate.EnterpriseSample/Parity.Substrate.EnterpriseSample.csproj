@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
   </PropertyGroup>
 
@@ -15,14 +15,18 @@
     <PackageReference Include="Prism.DryIoc.Forms" Version="7.2.0.1422" />
     <PackageReference Include="System.Reactive" Version="4.4.1" />
     <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.5.3.2" />
-    <PackageReference Include="Xamarin.Forms" Version="4.7.0.968" />
+    <PackageReference Include="Xamarin.Forms" Version="4.8.0.1451" />
     <PackageReference Include="Blake2Core" Version="1.0.0" />
     <PackageReference Include="OneOf" Version="2.1.155" />
-    <PackageReference Include="SimpleBase" Version="3.0.1" />
+    <PackageReference Include="SimpleBase" Version="2.1.0" />
     <PackageReference Include="IndexRange" Version="1.0.0" />
     <PackageReference Include="Extensions.Data.xxHash.core20" Version="1.0.2.1" />
     <PackageReference Include="StrobeNet" Version="0.0.2.4" />
     <PackageReference Include="System.Memory" Version="4.5.4" />
+    <PackageReference Include="ZXing.Net.Mobile.Forms" Version="2.4.1" />
+    <PackageReference Include="dotnetstandard-bip39" Version="1.0.2" />
+    <PackageReference Include="Xam.Plugin.Iconize" Version="3.5.0.129" />
+    <PackageReference Include="Xam.Plugin.Iconize.Material" Version="3.5.0.129" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,6 +38,9 @@
     </Reference>
     <Reference Include="Schnorrkel">
       <HintPath>..\assembly\Schnorrkel.dll</HintPath>
+    </Reference>
+    <Reference Include="sr25519-dotnet.lib">
+      <HintPath>..\assembly\sr25519-dotnet.lib.dll</HintPath>
     </Reference>
   </ItemGroup>
 
@@ -48,6 +55,9 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\NodeLogsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\SignExternalPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>

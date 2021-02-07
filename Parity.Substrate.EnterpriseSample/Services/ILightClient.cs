@@ -11,6 +11,7 @@ namespace Parity.Substrate.EnterpriseSample.Services
 
         Task InitAsync();
         Task StartAsync();
-        Task StopASync();
+        Task StopAsync();
+        Task PurgeAsync();
     }
 }

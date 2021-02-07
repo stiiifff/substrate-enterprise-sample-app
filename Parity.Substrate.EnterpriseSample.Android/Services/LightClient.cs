@@ -55,9 +55,20 @@ namespace Parity.Substrate.EnterpriseSample.Services
                 await Task.Run(StartNode);
         }
 
-        public async Task StopASync()
+        public async Task StopAsync()
         {
             await Task.Run(StopNode);
+        }
+
+        public async Task PurgeAsync()
+        {
+            if (IsRunning)
+            {
+                await StopAsync();
+            }
+
+            await PurgeChainAsync();
+            await StartAsync();
         }
 
         async Task<(string, string, string)> InstallNodeBinaryAsync()
@@ -86,15 +97,11 @@ namespace Parity.Substrate.EnterpriseSample.Services
                 }
 
                 basePath = Path.Combine(appPath, "node");
-                binPath = Path.Combine(ApplicationInfo.NativeLibraryDir, "node-template");
+                binPath = Path.Combine(ApplicationInfo.NativeLibraryDir, "enterprise-sample");
 
                 var chmod = await RunCommandAsync($"/system/bin/chmod 744 {binPath}");
                 if (!string.IsNullOrEmpty(chmod))
                     Log.Debug(GetType().Name, chmod);
-
-                //var res = await RunCommandAsync($"{binPath} purge-chain -y -d {basePath} --chain={chainSpecPath}");
-                //if (!string.IsNullOrEmpty(res))
-                //    Log.Debug(GetType().Name, res);
             }
             catch (System.Exception ex)
             {
@@ -161,6 +168,11 @@ namespace Parity.Substrate.EnterpriseSample.Services
                     nodeProcess = null;
                 }
             }
+        }
+
+        async Task PurgeChainAsync()
+        {
+            await RunCommandAsync($"{nodeBinPath} purge-chain -y -d {nodeBasePath} --chain={nodeChainSpecPath}");
         }
 
         private async Task<string> RunCommandAsync(string command)

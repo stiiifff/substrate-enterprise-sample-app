@@ -22,17 +22,18 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
 
         public ShipmentViewModel(INavigationService navigationService,
             ILightClient lightClient, IApplication polkadotApi,
-            IDeviceService device, IToastService toast)
+            IDeviceService device, IToastService toast, IAccountService accountService)
             : base(navigationService, lightClient, polkadotApi)
         {
             Device = device;
             Toast = toast;
-            TrackShipmentCommand = new Command(async (op) => await TrackShipmentAsync(Enum.Parse<ShippingOperation>((string)op)));
+            AccountService = accountService;
+            TrackShipmentCommand = new Command(async (op) => await TrackShipmentAsync((ShippingOperation)Enum.Parse(typeof(ShippingOperation),(string)op)));
         }
 
         public IDeviceService Device { get; }
         public IToastService Toast { get; }
-
+        public IAccountService AccountService { get; }
         public ICommand TrackShipmentCommand { get; }
 
         private string shipmentId;
@@ -160,15 +161,17 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             TransactionProgress = 0.0f;
             TransactionStatus = "";
 
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
                 try
                 {
                     var ser = PolkadotApi.Serializer;
 
-                    //TODO: Implement account management
-                    var sender = new Address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY");
-                    var secret = "0x33A6F3093F158A7109F679410BEF1A0C54168145E0CECB4DF006C1C2FFFB1F09925A225D97AA00682D6A59B95B18780C10D7032336E88F3442B42361F4A66011";
+                    var account = Xamarin.Essentials.Preferences.Get("AccountName", null);
+                    var address = Xamarin.Essentials.Preferences.Get("Address", null);
+                    var sender = new Address(address);
+
+                    var secret = (await AccountService.RetrieveAccountSecretAsync(account)).ToUnsecureString();
 
                     var encodedExtrinsic = ser.Serialize(
                         new TrackShipmentCall(
@@ -221,8 +224,11 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
                                         TransactionProgress = 1.0f;
 
                                         _ = Task.Delay(2000).ContinueWith(_ =>
-                                            Device.BeginInvokeOnMainThread(() =>
-                                                TransactionInProgress = false));
+                                            Device.BeginInvokeOnMainThread(async () =>
+                                            {
+                                                TransactionInProgress = false;
+                                                await LoadDataAsync();
+                                            }));
                                     }
                                 }
                             });

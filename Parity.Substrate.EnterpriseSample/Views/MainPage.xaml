@@ -1,20 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+<iconize:IconTabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            xmlns:prism="http://prismlibrary.com"
+            xmlns:iconize="clr-namespace:Plugin.Iconize;assembly=Plugin.Iconize"
             mc:Ignorable="d"
             xmlns:views="clr-namespace:Parity.Substrate.EnterpriseSample.Views"
             x:Class="Parity.Substrate.EnterpriseSample.Views.MainPage"
             Title="{Binding Title}">
 
-    <TabbedPage.ToolbarItems>
-        <ToolbarItem Text="{Binding BestBlock}" />
-    </TabbedPage.ToolbarItems>
+    <iconize:IconTabbedPage.ToolbarItems>
+        <iconize:IconToolbarItem Icon="md-account-circle" IconColor="White"
+                                 Command="{prism:NavigateTo 'NavigationPage/AccountInfoPage', UseModalNavigation=True}" />
+    </iconize:IconTabbedPage.ToolbarItems>
 
-    <TabbedPage.Children>
+    <iconize:IconTabbedPage.Children>
         <views:TrackingPage />
         <!--<views:ManagePage />-->
         <views:SettingsPage />
-    </TabbedPage.Children>
-</TabbedPage>
+    </iconize:IconTabbedPage.Children>
+</iconize:IconTabbedPage>

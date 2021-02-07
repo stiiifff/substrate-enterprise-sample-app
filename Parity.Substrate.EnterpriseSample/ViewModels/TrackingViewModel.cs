@@ -94,6 +94,10 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
             }
         }
 
+        OrganizationList GetOrganizationsOf(PublicKey account) => GetValueFromStorageMap<OrganizationList>("registrar", "OrganizationsOf", account);
+
+        ShipmentIdList GetShipmentsOfOrganization(PublicKey account) => GetValueFromStorageMap<ShipmentIdList>("ProductTracking", "ShipmentsOfOrganization", account);
+
         internal async Task LoadDataAsync()
         {
             IsBusy = true;
@@ -103,9 +107,12 @@ namespace Parity.Substrate.EnterpriseSample.ViewModels
                 {
                     try
                     {
-                        var response = PolkadotApi.GetStorage(new Address("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"), "ProductTracking", "ShipmentsOfOrganization");
-                        var shipments = PolkadotApi.Serializer.Deserialize<ShipmentIdList>(response.HexToByteArray());
-                        var shipmentsObs = new ObservableCollection<ShipmentInfo>(shipments.ShipmentIds.Select(s => new ShipmentInfo { ShipmentId = s.ToString() }));
+                        var address = Xamarin.Essentials.Preferences.Get("Address", null);
+                        var accountOrg = GetOrganizationsOf(AddressUtils.GetPublicKeyFromAddr(address)).Organizations.FirstOrDefault();
+                        var shipments = GetShipmentsOfOrganization(accountOrg);
+                        var shipmentsObs = new ObservableCollection<ShipmentInfo>(
+                            shipments.ShipmentIds.Select(s => new ShipmentInfo { ShipmentId = s.ToString() })
+                        );
                         Device.BeginInvokeOnMainThread(() => Shipments = shipmentsObs);
                     }
                     catch (Exception ex)
